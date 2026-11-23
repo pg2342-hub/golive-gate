@@ -1,6 +1,6 @@
 """golive-gate: agent eval cases, checks and go-live gates in one command."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .agents import http_agent  # noqa: E402
 from .analysis import ablate, diff  # noqa: E402

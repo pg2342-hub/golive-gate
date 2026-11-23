@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 (2026-11-23)
 
 Fixes from an independent review, all places where the gate could say go when it should not:
 
