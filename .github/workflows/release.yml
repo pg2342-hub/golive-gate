@@ -3,8 +3,11 @@ name: Release to PyPI
 # Publishes with PyPI trusted publishing: no API token is stored in this repo.
 # One-time setup on pypi.org: add a pending publisher for project "golive-gate",
 # owner pg2342-hub, repository golive-gate, workflow release.yml, environment pypi.
+# Runs when a version tag (v0.1.0) is pushed or a GitHub release is published.
 
 on:
+  push:
+    tags: ["v*"]
   release:
     types: [published]
 
