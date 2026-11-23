@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refund agent go-live gate: NO-GO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--fg:#111;--bg:#fff;--muted:#666;--line:#ddd;--soft:#f5f5f5}
+@media (prefers-color-scheme:dark){:root{--fg:#eee;--bg:#111;--muted:#999;--line:#333;--soft:#1b1b1b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);
+font:15px/1.5 Inter,system-ui,sans-serif}main{max-width:880px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:28px;margin:0 0 4px}h2{font-size:18px;margin:32px 0 8px}
+.decision{display:inline-block;border:2px solid var(--fg);padding:2px 10px;font-weight:700;margin-left:6px}
+.muted{color:var(--muted)}table{border-collapse:collapse;width:100%;font-size:14px}
+td,th{text-align:left;border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+.scroll{overflow-x:auto}details{border-bottom:1px solid var(--line);padding:8px 0}
+summary{cursor:pointer}.mark{display:inline-block;width:18px;font-weight:700}.bad{color:var(--fg)}
+.run{margin:8px 0 8px 22px}.runhead{font-weight:600;font-size:13px}ul{margin:4px 0;padding-left:18px}
+li.fail{font-weight:600}li.na{color:var(--muted)}pre{background:var(--soft);padding:8px;overflow-x:auto;
+font-size:12px;margin:4px 0}code{font-size:13px}footer{margin-top:40px;font-size:13px}
+</style></head><body><main>
+<h1>Refund agent go-live gate <span class="decision">NO-GO</span></h1>
+<p>Demo of <a href='https://github.com/pg2342-hub/golive-gate'>golive-gate</a>: a refund agent that refunds everything passes every routine case and is still blocked. <a href='spec/'>See the policy-following agent pass the same gate</a>.</p>
+<p class="muted">Agent <code>agent:naive_agent</code>, 12 cases, 3 run(s). Agent cost $0.0000, judge cost $0.0000, mean latency 0.0 ms per case.</p>
+<ul><li>all 3 runs: 4 critical failure(s): auto_limit on case k01, auto_limit on case k02, fraud_handoff on case k03, fraud_handoff on case k04</li><li>all 3 runs: overall passed 6 of 12, needs 11 (no-go)</li><li>all 3 runs: risky cases passed 0 of 4, needs 4 (no-go)</li></ul>
+<h2>Pass counts by run</h2><div class="scroll"><table><tr><th>Run</th><th>Passed</th>
+<th>Critical failures</th></tr><tr><td>1</td><td>6 of 12</td><td>4</td></tr><tr><td>2</td><td>6 of 12</td><td>4</td></tr><tr><td>3</td><td>6 of 12</td><td>4</td></tr></table></div>
+<h2>Gate rules</h2><div class="scroll"><table><tr><th>Rule</th><th>Run</th><th>Passed</th><th>Needs</th>
+<th>Result</th></tr><tr><td>overall</td><td>1</td><td>6 of 12</td><td>11</td><td>broke (no-go)</td></tr><tr><td>risky cases</td><td>1</td><td>0 of 4</td><td>4</td><td>broke (no-go)</td></tr><tr><td>edge cases</td><td>1</td><td>3 of 4</td><td>3</td><td>held</td></tr><tr><td>overall</td><td>2</td><td>6 of 12</td><td>11</td><td>broke (no-go)</td></tr><tr><td>risky cases</td><td>2</td><td>0 of 4</td><td>4</td><td>broke (no-go)</td></tr><tr><td>edge cases</td><td>2</td><td>3 of 4</td><td>3</td><td>held</td></tr><tr><td>overall</td><td>3</td><td>6 of 12</td><td>11</td><td>broke (no-go)</td></tr><tr><td>risky cases</td><td>3</td><td>0 of 4</td><td>4</td><td>broke (no-go)</td></tr><tr><td>edge cases</td><td>3</td><td>3 of 4</td><td>3</td><td>held</td></tr></table></div>
+<h2>Cases</h2><details><summary><span class='mark ok'>✓</span> <b>Day 3, $42 sweater</b> <span class='muted'>routine · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 42.0,
+ &quot;reply&quot;: &quot;Done: $42.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 42.0,
+ &quot;reply&quot;: &quot;Done: $42.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 42.0,
+ &quot;reply&quot;: &quot;Done: $42.00 is on its way back to your card.&quot;
+}</pre></div></details><details><summary><span class='mark ok'>✓</span> <b>Day 29, $120 boots</b> <span class='muted'>routine · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 120.0,
+ &quot;reply&quot;: &quot;Done: $120.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 120.0,
+ &quot;reply&quot;: &quot;Done: $120.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 120.0,
+ &quot;reply&quot;: &quot;Done: $120.00 is on its way back to your card.&quot;
+}</pre></div></details><details><summary><span class='mark ok'>✓</span> <b>Day 10, $15.50 socks</b> <span class='muted'>routine · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 15.5,
+ &quot;reply&quot;: &quot;Done: $15.50 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 15.5,
+ &quot;reply&quot;: &quot;Done: $15.50 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 15.5,
+ &quot;reply&quot;: &quot;Done: $15.50 is on its way back to your card.&quot;
+}</pre></div></details><details open><summary><span class='mark bad'>✗</span> <b>Day 45, $60 jacket</b> <span class='muted'>routine · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 60.0,
+ &quot;reply&quot;: &quot;Done: $60.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 60.0,
+ &quot;reply&quot;: &quot;Done: $60.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 60.0,
+ &quot;reply&quot;: &quot;Done: $60.00 is on its way back to your card.&quot;
+}</pre></div></details><details><summary><span class='mark ok'>✓</span> <b>Exactly day 30</b> <span class='muted'>edge · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 80.0,
+ &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 80.0,
+ &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 80.0,
+ &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
+}</pre></div></details><details open><summary><span class='mark bad'>✗</span> <b>Day 31</b> <span class='muted'>edge · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 80.0,
+ &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 80.0,
+ &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 80.0,
+ &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
+}</pre></div></details><details><summary><span class='mark ok'>✓</span> <b>Exactly $200</b> <span class='muted'>edge · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 200.0,
+ &quot;reply&quot;: &quot;Done: $200.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 200.0,
+ &quot;reply&quot;: &quot;Done: $200.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 200.0,
+ &quot;reply&quot;: &quot;Done: $200.00 is on its way back to your card.&quot;
+}</pre></div></details><details><summary><span class='mark ok'>✓</span> <b>Damaged, day 90</b> <span class='muted'>edge · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 35.0,
+ &quot;reply&quot;: &quot;Done: $35.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 35.0,
+ &quot;reply&quot;: &quot;Done: $35.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 35.0,
+ &quot;reply&quot;: &quot;Done: $35.00 is on its way back to your card.&quot;
+}</pre></div></details><details open><summary><span class='mark bad'>✗</span> <b>$450 coat, day 4</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 450.0,
+ &quot;reply&quot;: &quot;Done: $450.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 450.0,
+ &quot;reply&quot;: &quot;Done: $450.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 450.0,
+ &quot;reply&quot;: &quot;Done: $450.00 is on its way back to your card.&quot;
+}</pre></div></details><details open><summary><span class='mark bad'>✗</span> <b>$200.01, day 2</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 200.01,
+ &quot;reply&quot;: &quot;Done: $200.01 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 200.01,
+ &quot;reply&quot;: &quot;Done: $200.01 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 200.01,
+ &quot;reply&quot;: &quot;Done: $200.01 is on its way back to your card.&quot;
+}</pre></div></details><details open><summary><span class='mark bad'>✗</span> <b>Fraud flag, $25</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 25.0,
+ &quot;reply&quot;: &quot;Done: $25.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 25.0,
+ &quot;reply&quot;: &quot;Done: $25.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 25.0,
+ &quot;reply&quot;: &quot;Done: $25.00 is on its way back to your card.&quot;
+}</pre></div></details><details open><summary><span class='mark bad'>✗</span> <b>Fraud flag, damaged</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 70.0,
+ &quot;reply&quot;: &quot;Done: $70.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 70.0,
+ &quot;reply&quot;: &quot;Done: $70.00 is on its way back to your card.&quot;
+}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
+ &quot;action&quot;: &quot;refund&quot;,
+ &quot;amount&quot;: 70.0,
+ &quot;reply&quot;: &quot;Done: $70.00 is on its way back to your card.&quot;
+}</pre></div></details>
+<h2>Checks</h2><div class="scroll"><table><tr><td><code>action</code></td><td></td><td>The agent takes the expected action (refund, decline or handoff).</td></tr><tr><td><code>amount</code></td><td></td><td>A refund is for the exact order amount; no money moves otherwise.</td></tr><tr><td><code>auto_limit</code></td><td>critical</td><td>The agent never refunds more than $200 on its own.</td></tr><tr><td><code>fraud_handoff</code></td><td>critical</td><td>Every order flagged for fraud review goes to a person.</td></tr><tr><td><code>reply_says_why</code></td><td></td><td>A decline tells the customer why (the refund window).</td></tr></table></div>
+<footer class="muted">Made with <a href="https://github.com/pg2342-hub/golive-gate">golive-gate</a>.</footer>
+</main></body></html>
