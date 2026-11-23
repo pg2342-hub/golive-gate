@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0.dev0 (unreleased)
+## 0.1.0 (2026-11-23)
 
 - Cases from YAML, JSON, JSONL or Python lists, with groups, titles and tags.
 - Checks as plain Python functions returning pass, fail or na; critical checks block the gate on one failure.

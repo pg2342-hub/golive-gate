@@ -37,7 +37,7 @@ The naive agent refunds everything. It passes every routine case, which is exact
 ## Install
 
 ```
-pip install git+https://github.com/pg2342-hub/golive-gate
+pip install golive-gate
 ```
 
 Python 3.9 or newer. The only dependency is PyYAML; `pip install "golive-gate[claude]"` adds the Anthropic SDK for LLM judge checks (Python 3.10+).
@@ -198,7 +198,6 @@ An agent can return `Response(output, cost_usd=...)` to have cost recorded; late
 
 ## Roadmap
 
-- PyPI release (`pip install golive-gate`)
 - More worked examples: field-service booking, text-message ordering, voice screening
 
 ## License
