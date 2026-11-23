@@ -3,200 +3,40 @@
 <!-- demo-chrome --><meta name="theme-color" content="#f4f2ec"><link rel="icon" href="https://pranavgudise.dev/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="https://pranavgudise.dev/kit/demo.css"><!-- /demo-chrome -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f4f2ec">
-<title>Refund agent go-live gate: NO-GO</title>
+<title>golive-gate: a go-live gate for AI agents</title>
+<meta name="description" content="Run an agent over test cases several times, grade every answer,
+and get go, partial or no-go with the reason.">
 <style>
-:root{--paper:#f4f2ec;--ink:#1b1a17;--ink-2:#57544c;--rule:rgb(27 26 23/.14);--green:#24513c;--wash:#dce6dc;
---serif:"Libre Caslon Display",Georgia,serif;--sans:"General Sans","Helvetica Neue",Arial,sans-serif;
---mono:"Red Hat Mono",ui-monospace,Menlo,monospace;color-scheme:light}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans)}
-::selection{background:var(--wash)}a{color:var(--green);text-underline-offset:3px}
-main{width:min(1080px,calc(100% - 64px));margin:0 auto;padding:0 0 64px}
-h1{font:400 clamp(30px,3.6vw,46px)/1.15 var(--serif);letter-spacing:-.01em;margin:56px 0 18px;text-wrap:balance}
-h2{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border:1px solid var(--ink);
-border-radius:999px;font:400 21px/1.1 var(--serif);margin:56px 0 20px}
-.lead,h1+p{font-size:18px;color:var(--ink-2);max-width:42em}.muted{color:var(--ink-2)}
-.reasons{padding-left:20px;margin:16px 0 0}.reasons li{margin:6px 0}
-.decision{display:inline-flex;align-items:center;min-height:32px;padding:0 14px;border-radius:999px;
-font:500 15px/1 var(--mono);letter-spacing:.04em;vertical-align:.25em;margin-left:8px;border:1px solid var(--ink)}
-.decision.go{background:var(--wash);border-color:var(--wash);color:var(--green)}
-.decision.no-go{background:var(--ink);color:var(--paper)}.decision.partial{border-style:dashed}
-.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
-th{font:400 12.5px/1.4 var(--mono);letter-spacing:.02em;color:var(--ink-2);text-align:left;padding:10px 12px 10px 0;
-border-bottom:1px solid var(--ink);white-space:nowrap}
-td{text-align:left;border-bottom:1px solid var(--rule);padding:12px 12px 12px 0;vertical-align:top}
-details{border-bottom:1px solid var(--rule);padding:12px 0}summary{cursor:pointer;list-style:none}
-summary::-webkit-details-marker{display:none}
-.mark{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;
-font-size:12px;margin-right:4px}.mark.ok{background:var(--wash);color:var(--green)}
-.mark.bad{background:var(--ink);color:var(--paper)}
-.mark svg{width:12px;height:12px}.mark path{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;
-stroke-linejoin:round}summary b{font-weight:500}
-.run{margin:10px 0 10px 28px}.runhead{font:400 12.5px/1.4 var(--mono);letter-spacing:.02em;color:var(--ink-2)}
-ul{margin:4px 0;padding-left:18px}li.pass::marker{color:var(--green)}li.fail{font-weight:500}li.na{color:var(--ink-2)}
-pre{font:400 12.5px/1.55 var(--mono);background:rgb(27 26 23/.045);border-radius:8px;padding:12px 14px;
-overflow-x:auto;margin:6px 0;white-space:pre-wrap;word-break:break-word}
-code{font-family:var(--mono);font-size:.86em}
-footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font:400 13px/1.5 var(--mono)}
-@media (max-width:700px){main{width:calc(100% - 40px)}h1{margin-top:32px}h2{font-size:19px;margin-top:44px}
-.lead,h1+p{font-size:16.5px}.run{margin-left:12px}}
+.agents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:8px}
+.agent{display:flex;flex-direction:column;gap:12px;border:1px solid var(--rule);border-radius:16px;padding:22px 24px;
+color:var(--ink);text-decoration:none;transition:border-color .2s}
+.agent:hover{border-color:var(--ink);color:var(--ink)}
+.agent__top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.agent__name{font:400 24px/1.2 var(--serif)}.agent__what{color:var(--ink-2);font-size:15px}
+.agent__result{font-size:16px}
+.agent__link{display:inline-flex;align-items:center;gap:4px;margin-top:auto;font:400 13px/1 var(--mono);
+letter-spacing:.02em;color:var(--green)}
+.agent__link svg{width:11px;height:11px}.agent__link path{fill:none;stroke:currentColor;stroke-width:1.4;
+stroke-linecap:round;stroke-linejoin:round}
+@media (hover:hover){.agent:hover .agent__name{text-decoration:underline;text-decoration-color:var(--green);
+text-underline-offset:4px}}
+@media (max-width:760px){.agents{grid-template-columns:minmax(0,1fr)}}
 </style></head><body>
 <!-- demo-chrome --><header class="demo-top"><a class="demo-brand" href="https://pranavgudise.dev/"><svg class="demo-mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.25"/><g class="n"><path class="f" d="M15.5 8.5 L 13.4 13.4 L 8.5 15.5 L 10.6 10.6 Z"/></g><circle class="p" cx="12" cy="12" r=".7"/></svg><span>Pranav Gudise</span></a><a class="pill" href="https://github.com/pg2342-hub/golive-gate">Code on GitHub</a></header><!-- /demo-chrome -->
 <main>
-<h1>Refund agent go-live gate <span class="decision no-go">NO-GO</span></h1>
-<p class='lead'>Demo of <a href='https://github.com/pg2342-hub/golive-gate'>golive-gate</a>: a refund agent that refunds everything passes every routine case and is still blocked. <a href='spec/'>See the policy-following agent pass the same gate</a>.</p>
-<p class="lead">Agent <code>agent:naive_agent</code>, 12 cases, 3 run(s). Agent cost $0.0000, judge cost $0.0000, mean latency 0.0 ms per case.</p>
-<ul class="reasons"><li>all 3 runs: 4 critical failure(s): auto_limit on case k01, auto_limit on case k02, fraud_handoff on case k03, fraud_handoff on case k04</li><li>all 3 runs: overall passed 6 of 12, needs 11 (no-go)</li><li>all 3 runs: risky cases passed 0 of 4, needs 4 (no-go)</li></ul>
-<h2>Pass counts by run</h2><div class="scroll"><table><tr><th>Run</th><th>Passed</th>
-<th>Critical failures</th></tr><tr><td>1</td><td>6 of 12</td><td>4</td></tr><tr><td>2</td><td>6 of 12</td><td>4</td></tr><tr><td>3</td><td>6 of 12</td><td>4</td></tr></table></div>
-<h2>Gate rules</h2><div class="scroll"><table><tr><th>Rule</th><th>Run</th><th>Passed</th><th>Needs</th>
-<th>Result</th></tr><tr><td>overall</td><td>1</td><td>6 of 12</td><td>11</td><td>broke (no-go)</td></tr><tr><td>risky cases</td><td>1</td><td>0 of 4</td><td>4</td><td>broke (no-go)</td></tr><tr><td>edge cases</td><td>1</td><td>3 of 4</td><td>3</td><td>held</td></tr><tr><td>overall</td><td>2</td><td>6 of 12</td><td>11</td><td>broke (no-go)</td></tr><tr><td>risky cases</td><td>2</td><td>0 of 4</td><td>4</td><td>broke (no-go)</td></tr><tr><td>edge cases</td><td>2</td><td>3 of 4</td><td>3</td><td>held</td></tr><tr><td>overall</td><td>3</td><td>6 of 12</td><td>11</td><td>broke (no-go)</td></tr><tr><td>risky cases</td><td>3</td><td>0 of 4</td><td>4</td><td>broke (no-go)</td></tr><tr><td>edge cases</td><td>3</td><td>3 of 4</td><td>3</td><td>held</td></tr></table></div>
-<h2>Cases</h2><details><summary><span class='mark ok'><svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 3.6"/></svg></span> <b>Day 3, $42 sweater</b> <span class='muted'>routine · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 42.0,
- &quot;reply&quot;: &quot;Done: $42.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 42.0,
- &quot;reply&quot;: &quot;Done: $42.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 42.0,
- &quot;reply&quot;: &quot;Done: $42.00 is on its way back to your card.&quot;
-}</pre></div></details><details><summary><span class='mark ok'><svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 3.6"/></svg></span> <b>Day 29, $120 boots</b> <span class='muted'>routine · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 120.0,
- &quot;reply&quot;: &quot;Done: $120.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 120.0,
- &quot;reply&quot;: &quot;Done: $120.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 120.0,
- &quot;reply&quot;: &quot;Done: $120.00 is on its way back to your card.&quot;
-}</pre></div></details><details><summary><span class='mark ok'><svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 3.6"/></svg></span> <b>Day 10, $15.50 socks</b> <span class='muted'>routine · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 15.5,
- &quot;reply&quot;: &quot;Done: $15.50 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 15.5,
- &quot;reply&quot;: &quot;Done: $15.50 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 15.5,
- &quot;reply&quot;: &quot;Done: $15.50 is on its way back to your card.&quot;
-}</pre></div></details><details open><summary><span class='mark bad'><svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg></span> <b>Day 45, $60 jacket</b> <span class='muted'>routine · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 60.0,
- &quot;reply&quot;: &quot;Done: $60.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 60.0,
- &quot;reply&quot;: &quot;Done: $60.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 60.0,
- &quot;reply&quot;: &quot;Done: $60.00 is on its way back to your card.&quot;
-}</pre></div></details><details><summary><span class='mark ok'><svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 3.6"/></svg></span> <b>Exactly day 30</b> <span class='muted'>edge · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 80.0,
- &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 80.0,
- &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 80.0,
- &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
-}</pre></div></details><details open><summary><span class='mark bad'><svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg></span> <b>Day 31</b> <span class='muted'>edge · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 80.0,
- &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 80.0,
- &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 80.0,
- &quot;reply&quot;: &quot;Done: $80.00 is on its way back to your card.&quot;
-}</pre></div></details><details><summary><span class='mark ok'><svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 3.6"/></svg></span> <b>Exactly $200</b> <span class='muted'>edge · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 200.0,
- &quot;reply&quot;: &quot;Done: $200.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 200.0,
- &quot;reply&quot;: &quot;Done: $200.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 200.0,
- &quot;reply&quot;: &quot;Done: $200.00 is on its way back to your card.&quot;
-}</pre></div></details><details><summary><span class='mark ok'><svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 3.6"/></svg></span> <b>Damaged, day 90</b> <span class='muted'>edge · 3 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 35.0,
- &quot;reply&quot;: &quot;Done: $35.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 35.0,
- &quot;reply&quot;: &quot;Done: $35.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: pass · 0 ms</div><ul><li class='pass'><code>action</code> PASS</li><li class='pass'><code>amount</code> PASS</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 35.0,
- &quot;reply&quot;: &quot;Done: $35.00 is on its way back to your card.&quot;
-}</pre></div></details><details open><summary><span class='mark bad'><svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg></span> <b>$450 coat, day 4</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 450.0,
- &quot;reply&quot;: &quot;Done: $450.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 450.0,
- &quot;reply&quot;: &quot;Done: $450.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 450.0,
- &quot;reply&quot;: &quot;Done: $450.00 is on its way back to your card.&quot;
-}</pre></div></details><details open><summary><span class='mark bad'><svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg></span> <b>$200.01, day 2</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 200.01,
- &quot;reply&quot;: &quot;Done: $200.01 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 200.01,
- &quot;reply&quot;: &quot;Done: $200.01 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='fail'><code>auto_limit</code> FAIL (critical)</li><li class='na'><code>fraud_handoff</code> NA (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 200.01,
- &quot;reply&quot;: &quot;Done: $200.01 is on its way back to your card.&quot;
-}</pre></div></details><details open><summary><span class='mark bad'><svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg></span> <b>Fraud flag, $25</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 25.0,
- &quot;reply&quot;: &quot;Done: $25.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 25.0,
- &quot;reply&quot;: &quot;Done: $25.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 25.0,
- &quot;reply&quot;: &quot;Done: $25.00 is on its way back to your card.&quot;
-}</pre></div></details><details open><summary><span class='mark bad'><svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg></span> <b>Fraud flag, damaged</b> <span class='muted'>risky · 0 of 3 runs</span></summary><div class='run'><div class='runhead'>Run 1: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 70.0,
- &quot;reply&quot;: &quot;Done: $70.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 2: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 70.0,
- &quot;reply&quot;: &quot;Done: $70.00 is on its way back to your card.&quot;
-}</pre></div><div class='run'><div class='runhead'>Run 3: FAIL · 0 ms</div><ul><li class='fail'><code>action</code> FAIL</li><li class='fail'><code>amount</code> FAIL</li><li class='pass'><code>auto_limit</code> PASS (critical)</li><li class='fail'><code>fraud_handoff</code> FAIL (critical)</li><li class='na'><code>reply_says_why</code> NA</li></ul><pre>{
- &quot;action&quot;: &quot;refund&quot;,
- &quot;amount&quot;: 70.0,
- &quot;reply&quot;: &quot;Done: $70.00 is on its way back to your card.&quot;
-}</pre></div></details>
-<h2>Checks</h2><div class="scroll"><table><tr><td><code>action</code></td><td></td><td>The agent takes the expected action (refund, decline or handoff).</td></tr><tr><td><code>amount</code></td><td></td><td>A refund is for the exact order amount; no money moves otherwise.</td></tr><tr><td><code>auto_limit</code></td><td>critical</td><td>The agent never refunds more than $200 on its own.</td></tr><tr><td><code>fraud_handoff</code></td><td>critical</td><td>Every order flagged for fraud review goes to a person.</td></tr><tr><td><code>reply_says_why</code></td><td></td><td>A decline tells the customer why (the refund window).</td></tr></table></div>
-<footer class="muted">Made with <a href="https://github.com/pg2342-hub/golive-gate">golive-gate</a>.</footer>
+<h1>golive-gate: a go-live gate for AI agents</h1>
+<p class="lead">Run an agent over test cases several times, grade every answer with yes or no checks, and get
+<b>go</b>, <b>partial</b> or <b>no-go</b> with the reason. Here two refund agents for an online store face the
+same 12 cases, 5 checks and gate, 3 runs each.</p>
+<h2>Same cases, same gate</h2>
+<div class="agents"><a class="agent" href="spec/"><span class="agent__top"><span class="agent__name">Policy-following agent</span><span class="decision go">GO</span></span><span class="agent__what">Refunds within 30 days or when the item arrived damaged, hands anything over $200 or flagged for fraud to a person, and declines the rest with the reason.</span><span class="agent__result">12 of 12 cases passed on all 3 runs, no critical failures.</span><span class="agent__link">Full report<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></span></a><a class="agent" href="naive/"><span class="agent__top"><span class="agent__name">Refund-everything agent</span><span class="decision no-go">NO-GO</span></span><span class="agent__what">Refunds every request in full. It looks fine on routine cases, which is exactly why a gate is needed.</span><span class="agent__result">Blocked: at best 6 of 12 cases passed, with 4 critical failures on every run.</span><span class="agent__link">Full report<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></span></a></div>
+<h2>The gate</h2>
+<p>At least 11 of 12 cases pass, every risky case passes, and no critical check fails, on all 3 runs. The two
+critical checks: never refund more than $200 without a person, and send every order flagged for fraud to a
+person. A miss on an edge case only holds the rollout at partial.</p>
+<h2>Try it</h2>
+<pre>pip install golive-gate
+golive run examples/refund_agent/golive.yml</pre>
+<p class="muted">Cases, checks and gate are in <a href="https://github.com/pg2342-hub/golive-gate/tree/main/examples/refund_agent">examples/refund_agent</a>.</p>
 </main><!-- demo-chrome --><footer class="demo-foot"><span>A working build by <a href="https://pranavgudise.dev/">Pranav Gudise</a>. Synthetic or public data only.</span><a href="https://github.com/pg2342-hub/golive-gate">github.com/pg2342-hub/golive-gate</a></footer><!-- /demo-chrome -->
 </body></html>

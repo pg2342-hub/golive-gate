@@ -17,13 +17,17 @@ _OK = '<svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 
 _BAD = '<svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg>'
 
 
-def render(data: dict[str, Any], title: str = "") -> str:
-    """Render a results.json dict (see report.to_dict) as one HTML page."""
+def render(data: dict[str, Any], title: str = "", heading: str = "") -> str:
+    """Render a results.json dict (see report.to_dict) as one HTML page.
+
+    ``heading`` replaces the gate name in the page heading, e.g. to name the agent under test.
+    """
     e = html.escape
     decision = data["decision"]
     summary = data["summary"]
     gate = data["gate_result"]
-    title = title or f"{data['gate']}: {_LABEL[decision]}"
+    heading = heading or data["gate"]
+    title = title or f"{heading}: {_LABEL[decision]}"
     checks = {c["id"]: c for c in data["checks"]}
 
     reasons = "".join(f"<li>{e(r)}</li>" for r in gate["reasons"])
@@ -81,7 +85,7 @@ def render(data: dict[str, Any], title: str = "") -> str:
 <meta name="theme-color" content="#f4f2ec">
 <title>{e(title)}</title>
 <style>{_CSS}</style></head><body><main>
-<h1>{e(data["gate"])} <span class="decision {decision_class}">{_LABEL[decision]}</span></h1>
+<h1>{e(heading)} <span class="decision {decision_class}">{_LABEL[decision]}</span></h1>
 <p class="lead">{agent}{len(data["cases"])} cases, {data["runs"]} run(s). {e(cost)}</p>
 <ul class="reasons">{reasons}</ul>
 <h2>Pass counts by run</h2><div class="scroll"><table><tr><th>Run</th><th>Passed</th>
