@@ -65,7 +65,18 @@ jobs:
         run: golive ablate examples/refund_agent/golive.yml --agent agent:naive_agent --runs 1 --out reports/ablation
       - name: LLM judge example (runs only when the ANTHROPIC_API_KEY secret is set)
         if: env.ANTHROPIC_API_KEY != ''
-        run: golive run examples/refund_agent/golive.judge.yml --out reports/judge
+        run: |
+          golive run examples/refund_agent/golive.judge.yml --out reports/judge
+          python - <<'PY'
+          import json
+          d = json.load(open("reports/judge/results.json"))
+          print("judge cost USD:", d["summary"]["total_judge_cost_usd"])
+          for case in d["cases"]:
+              for run in case["runs"]:
+                  v = run["verdicts"].get("decline_tone")
+                  if v and v["result"] != "na":
+                      print(f"{case['id']} {v['result'].upper()}: {v['reason']} | reply: {run['output']['reply']}")
+          PY
       - name: Keep the reports
         if: always()
         uses: actions/upload-artifact@v4
