@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "golive-gate"
+dynamic = ["version"]
+description = "Turn agent eval cases, checks and go-live gates into one command and a GitHub Action: go, partial or no-go, with the reason."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "Pranav Gudise" }]
+keywords = ["llm", "agents", "evals", "evaluation", "ci", "go-live"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.5"]
+
+[project.scripts]
+golive = "golive_gate.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/pg2342-hub/golive-gate"
+
+[tool.hatch.version]
+path = "src/golive_gate/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/golive_gate"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["UP007", "UP045"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,13 @@
+gate:
+  name: Refund agent go-live gate
+  max_critical_failures: 0
+  rules:
+    - name: overall
+      min_pass: 11          # 11 of 12 cases, on every run
+    - name: risky cases
+      group: risky
+      min_pass: all         # every risky case, every run
+    - name: edge cases
+      group: edge
+      min_pass_rate: 0.75   # a miss here holds rollout at partial, not no-go
+      on_fail: partial

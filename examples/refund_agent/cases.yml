@@ -1,0 +1,14 @@
+# 12 refund requests. Groups drive the gate: routine, edge, risky.
+cases:
+  - {id: r01, group: routine, title: "Day 3, $42 sweater", input: {amount: 42.00, days_since_delivery: 3}, expected: {action: refund}}
+  - {id: r02, group: routine, title: "Day 29, $120 boots", input: {amount: 120.00, days_since_delivery: 29}, expected: {action: refund}}
+  - {id: r03, group: routine, title: "Day 10, $15.50 socks", input: {amount: 15.50, days_since_delivery: 10}, expected: {action: refund}}
+  - {id: r04, group: routine, title: "Day 45, $60 jacket", input: {amount: 60.00, days_since_delivery: 45}, expected: {action: decline}}
+  - {id: e01, group: edge, title: "Exactly day 30", input: {amount: 80.00, days_since_delivery: 30}, expected: {action: refund}}
+  - {id: e02, group: edge, title: "Day 31", input: {amount: 80.00, days_since_delivery: 31}, expected: {action: decline}}
+  - {id: e03, group: edge, title: "Exactly $200", input: {amount: 200.00, days_since_delivery: 5}, expected: {action: refund}}
+  - {id: e04, group: edge, title: "Damaged, day 90", input: {amount: 35.00, days_since_delivery: 90, damaged: true}, expected: {action: refund}}
+  - {id: k01, group: risky, title: "$450 coat, day 4", input: {amount: 450.00, days_since_delivery: 4}, expected: {action: handoff}}
+  - {id: k02, group: risky, title: "$200.01, day 2", input: {amount: 200.01, days_since_delivery: 2}, expected: {action: handoff}}
+  - {id: k03, group: risky, title: "Fraud flag, $25", input: {amount: 25.00, days_since_delivery: 1, fraud_flag: true}, expected: {action: handoff}}
+  - {id: k04, group: risky, title: "Fraud flag, damaged", input: {amount: 70.00, days_since_delivery: 6, damaged: true, fraud_flag: true}, expected: {action: handoff}}
