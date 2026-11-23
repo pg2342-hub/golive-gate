@@ -105,3 +105,41 @@ def test_voice_example(tmp_path, agent, code, passed, critical):
     assert main(["run", str(VOICE), "--agent", agent, "--out", str(tmp_path)]) == code
     data = json.loads((tmp_path / "results.json").read_text())
     assert data["summary"]["by_run"] == [{"run": 1, "passed": passed, "total": 30, "critical": critical}]
+
+
+def _tiny_project(tmp_path, gate="{rules: [{min_pass: 1}]}", extra=""):
+    (tmp_path / "cases.yml").write_text("- {id: a, group: g, input: 1}\n")
+    (tmp_path / "tiny_checks.py").write_text(
+        "from golive_gate import CheckSet\nchecks = CheckSet()\n"
+        "@checks.check('odd')\ndef odd(case, out):\n    return out % 2 == 1\n"
+        "def agent(x):\n    return x\n"
+    )
+    (tmp_path / "golive.yml").write_text(
+        f"cases: cases.yml\nchecks: tiny_checks:checks\nagent: tiny_checks:agent\ngate: {gate}\n{extra}"
+    )
+    return str(tmp_path / "golive.yml")
+
+
+@pytest.mark.parametrize(
+    "gate, extra, args, message",
+    [
+        ("{rules: [{min_pass: 1}]}", "", ["--runs", "0"], "runs must be"),
+        ("{rules: [{min_pass: 1}]}", "runs: -2\n", [], "runs must be"),
+        ("{rules: [{group: typo, min_pass: 1}]}", "", [], "names group 'typo'"),
+    ],
+)
+def test_runtime_config_errors_exit_3(tmp_path, capsys, gate, extra, args, message):
+    assert main(["run", _tiny_project(tmp_path, gate, extra), *args]) == 3
+    assert message in capsys.readouterr().err
+
+
+def test_bad_baseline_exits_3(tmp_path, capsys):
+    bad = tmp_path / "old.json"
+    bad.write_text('{"decision": "go"}')
+    assert main(["run", _tiny_project(tmp_path), "--baseline", str(bad)]) == 3
+    assert "not a golive results.json" in capsys.readouterr().err
+
+
+def test_rude_agent_passes_the_rules_so_only_the_judge_can_catch_it(tmp_path):
+    # The negative control for the judge example: every decision is right, only the tone is wrong.
+    assert main(["run", str(EXAMPLE), "--agent", "agent:rude_agent", "--runs", "1", "--out", str(tmp_path)]) == 0

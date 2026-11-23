@@ -25,9 +25,15 @@ def test_crashing_check_fails_with_reason():
     assert v.result == FAIL and "ZeroDivisionError" in v.reason
 
 
-def test_bad_verdict_string_is_rejected():
-    with pytest.raises(ValueError):
-        Check("c", lambda case, out: "maybe").run(CASE, None)
+@pytest.mark.parametrize("raw", ["maybe", 2, -1, 0.5, ["pass"], {"result": "pass"}])
+def test_unreadable_check_result_fails_instead_of_crashing(raw):
+    v = Check("c", lambda case, out: raw).run(CASE, None)
+    assert v.result == FAIL and "not pass, fail or na" in v.reason
+
+
+@pytest.mark.parametrize("raw, result", [(1, PASS), (0, FAIL), (" PASS ", PASS), ("Na", NA), (None, NA)])
+def test_check_result_coercion(raw, result):
+    assert Check("c", lambda case, out: raw).run(CASE, None).result == result
 
 
 def test_checkset_decorator_order_and_without(checks):

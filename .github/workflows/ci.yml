@@ -50,33 +50,31 @@ jobs:
           golive run examples/refund_agent/golive.yml --agent agent:naive_agent --out reports/naive
           code=$?
           if [ "$code" -ne 1 ]; then echo "expected no-go (exit 1), got $code"; exit 1; fi
+          python scripts/expect.py reports/naive/results.json no-go
       - name: Field-service booking example
         run: |
           golive run examples/field_service_booking/golive.yml --runs 1 --out reports/booking
           set +e; golive run examples/field_service_booking/golive.yml --agent agent:naive_agent --runs 1 --out reports/booking-naive
-          test $? -eq 1
+          test $? -eq 1 || exit 1
+          set -e; python scripts/expect.py reports/booking-naive/results.json no-go
       - name: Voice screening example (prompt fix takes it from no-go to go)
         run: |
           golive run examples/voice_screening/golive.yml --agent agent:candidate_v2 --out reports/voice-v2
           set +e; golive run examples/voice_screening/golive.yml --agent agent:candidate_v1 --out reports/voice-v1
-          test $? -eq 1
-          set -e; golive diff reports/voice-v1/results.json reports/voice-v2/results.json
+          test $? -eq 1 || exit 1
+          set -e; python scripts/expect.py reports/voice-v1/results.json no-go
+          golive diff reports/voice-v1/results.json reports/voice-v2/results.json
       - name: Ablation against the naive agent
         run: golive ablate examples/refund_agent/golive.yml --agent agent:naive_agent --runs 1 --out reports/ablation
       - name: LLM judge example (runs only when the ANTHROPIC_API_KEY secret is set)
         if: env.ANTHROPIC_API_KEY != ''
         run: |
           golive run examples/refund_agent/golive.judge.yml --out reports/judge
-          python - <<'PY'
-          import json
-          d = json.load(open("reports/judge/results.json"))
-          print("judge cost USD:", d["summary"]["total_judge_cost_usd"])
-          for case in d["cases"]:
-              for run in case["runs"]:
-                  v = run["verdicts"].get("decline_tone")
-                  if v and v["result"] != "na":
-                      print(f"{case['id']} {v['result'].upper()}: {v['reason']} | reply: {run['output']['reply']}")
-          PY
+          python scripts/expect.py reports/judge/results.json go --show decline_tone
+          # Negative control: right decisions, rude declines. Only the judge can catch this.
+          set +e; golive run examples/refund_agent/golive.judge.yml --agent agent:rude_agent --out reports/judge-rude
+          test $? -eq 1 || exit 1
+          set -e; python scripts/expect.py reports/judge-rude/results.json no-go --show decline_tone --fails decline_tone
       - name: Keep the reports
         if: always()
         uses: actions/upload-artifact@v4

@@ -82,7 +82,9 @@ def fraud_handoff(case, out):
     return out["action"] == "handoff"
 ```
 
-A check returns `True`/`False`, `"pass"`/`"fail"`/`"na"`, `None` (na), a `(result, reason)` pair, or a `Verdict`. A check that raises counts as a failure, with the error kept as the reason.
+A check returns `True`/`False`, `"pass"`/`"fail"`/`"na"`, `None` (na), a `(result, reason)` pair, or a `Verdict`. A check that raises, or returns anything else, counts as a failure, with the reason kept.
+
+A case passes when no check fails and at least one check applied: a case where every check said na was never tested, so it does not count as a pass. If the agent crashes on a case, that case fails, and when the project has any critical check the crash also counts as a critical failure, since the critical checks never got to run.
 
 `gate.yml`:
 
@@ -102,7 +104,7 @@ gate:
       on_fail: partial        # a miss holds rollout at partial instead of no-go
 ```
 
-The decision is **no-go** if critical failures exceed the allowance or any `no-go` rule breaks on any run, **partial** if only `partial` rules break, and **go** otherwise.
+The decision is **no-go** if critical failures exceed the allowance or any `no-go` rule breaks on any run, **partial** if only `partial` rules break, and **go** otherwise. `max_critical_failures` is a total across all runs: the same failure on 3 runs counts 3 times. Rules are checked when the project loads, so a typo in a group name, `min_pass: 0.9` (use `min_pass_rate`), or setting both `min_pass` and `min_pass_rate` is a config error, never a gate that quietly passes.
 
 ## Output
 
@@ -117,9 +119,9 @@ The decision is **no-go** if critical failures exceed the allowance or any `no-g
 | 0 | go (or partial, unless `--strict`) |
 | 1 | no-go, or a regression against `--baseline` |
 | 2 | partial with `--strict` |
-| 3 | config error |
+| 3 | config error (bad golive.yml or gate, unknown group, `--runs 0`, a baseline that is not a results.json) |
 
-So a CI step that runs `golive run` fails the build when the agent is not ready. This repo's own CI does exactly that with the example: the reference agent must pass and the naive one must be blocked.
+So a CI step that runs `golive run` fails the build when the agent is not ready. This repo's own CI does exactly that with the examples: each reference agent must pass, and each weak agent must be blocked with a no-go decision in results.json (not just exit 1, which a config error could also cause in another setup).
 
 ## GitHub Action
 
@@ -153,7 +155,7 @@ tone = judge_check(
 )
 ```
 
-The judge must answer `VERDICT: PASS|FAIL|NA - reason`. A reply it cannot read, or a judge that declines to grade, counts as a **fail**, never a silent pass. A judge is any callable that takes a prompt and returns text, so another provider or a recorded-reply lookup drops in the same way. Judge cost is reported separately from agent cost. See `examples/refund_agent/golive.judge.yml`.
+The judge must end its reply with one line, `VERDICT: PASS`, `VERDICT: FAIL` or `VERDICT: NA`, then an optional reason. Only the last line counts, so a verdict quoted mid-reply or an echoed rubric cannot pass a check. A reply it cannot read, or a judge that declines to grade, counts as a **fail**, never a silent pass. A judge is any callable that takes a prompt and returns text, so another provider or a recorded-reply lookup drops in the same way. Judge cost is reported separately from agent cost. See `examples/refund_agent/golive.judge.yml`. CI runs it with a real model against two agents: the reference agent (the judge passes its declines) and `rude_agent`, a negative control that makes every right decision and mentions the refund window, so every rule check passes, but blames the customer. The judge has to fail it for the gate to say no-go.
 
 ## Agents behind an API
 
@@ -182,7 +184,7 @@ $ golive run golive.yml --baseline reports/last-release/results.json
 $ golive diff before/results.json after/results.json
 ```
 
-A case counts as passing only if it passed on every run. Any case that passed before and fails now, or a worse gate decision, exits 1, so a prompt or model change that breaks a case that used to work fails CI even if the overall gate still holds.
+Cases are compared by how many runs they passed. A case that passes on fewer runs than before regressed, so a case that was 3 of 3 and is now 2 of 3 counts. Removing a case that used to pass on every run also counts, so a regression cannot be hidden by deleting the case that shows it. Any regression, or a worse gate decision, exits 1, so a prompt or model change that breaks a case that used to work fails CI even if the overall gate still holds.
 
 ## Use it from Python
 

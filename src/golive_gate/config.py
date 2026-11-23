@@ -25,7 +25,7 @@ import yaml
 from .agents import http_agent
 from .cases import Case, load_cases
 from .checks import CheckSet
-from .gates import Gate
+from .gates import Gate, check_groups
 
 
 @dataclass
@@ -61,17 +61,24 @@ def load_project(path: str | Path, agent: str | None = None, runs: int | None = 
     if not callable(agent_fn):
         raise TypeError(f"agent {agent_ref!r} is not callable")
 
+    n_runs = runs if runs is not None else raw.get("runs", 1)
+    if isinstance(n_runs, bool) or not isinstance(n_runs, int) or n_runs < 1:
+        raise ValueError(f"runs must be a whole number, 1 or more, got {n_runs!r}")
+
     gate_raw = raw["gate"]
     gate = Gate.from_dict(gate_raw) if isinstance(gate_raw, dict) else Gate.load(root / gate_raw)
 
+    cases = load_cases(root / raw["cases"])
+    check_groups(gate, cases)
+
     return Project(
         root=root,
-        cases=load_cases(root / raw["cases"]),
+        cases=cases,
         checks=checks,
         agent=agent_fn,
         agent_ref=agent_ref,
         gate=gate,
-        runs=int(runs if runs is not None else raw.get("runs", 1)),
+        runs=n_runs,
     )
 
 
@@ -89,7 +96,7 @@ def _use_root(root: Path) -> None:
     for name in list(sys.modules):
         if name.split(".")[0] in local:
             module_file = getattr(sys.modules[name], "__file__", None) or ""
-            if not module_file.startswith(str(root)):
+            if not module_file.startswith(str(root) + os.sep):
                 del sys.modules[name]
 
 

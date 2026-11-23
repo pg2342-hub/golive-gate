@@ -32,7 +32,7 @@ inputs:
 
 outputs:
   decision:
-    description: go, partial or no-go
+    description: go, partial or no-go (error when the run wrote no results, e.g. a config error)
     value: ${{ steps.result.outputs.decision }}
   report:
     description: Path to the folder with the reports
@@ -67,6 +67,8 @@ runs:
         [ -n "$RUNS" ] && args+=(--runs "$RUNS")
         [ -n "$BASELINE" ] && args+=(--baseline "$BASELINE")
         [ "$STRICT" = "true" ] && args+=(--strict)
+        # A results.json left from an earlier run would report a stale decision if this one fails early.
+        rm -f "$OUT/results.json" "$OUT/report.md" "$OUT/index.html"
         set +e
         golive "${args[@]}"
         echo "code=$?" >> "$GITHUB_OUTPUT"
@@ -76,7 +78,9 @@ runs:
       env:
         OUT: ${{ inputs.out }}
       run: |
-        if [ -f "$OUT/results.json" ]; then
+        if [ ! -f "$OUT/results.json" ]; then
+          echo "decision=error" >> "$GITHUB_OUTPUT"
+        else
           python -c "import json,sys; print('decision=' + json.load(open(sys.argv[1]))['decision'])" "$OUT/results.json" >> "$GITHUB_OUTPUT"
           cat "$OUT/report.md" >> "$GITHUB_STEP_SUMMARY"
         fi

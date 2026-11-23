@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+Fixes from an independent review, all places where the gate could say go when it should not:
+
+- A judge reply only counts when its last line is `VERDICT: PASS|FAIL|NA`. Before, a `VERDICT: PASS` anywhere in the reply, or `VERDICT: PASSABLE`, could pass a check.
+- An agent crash counts as a critical failure when any check is critical, since the critical checks never ran.
+- A case where every check said na no longer counts as a pass.
+- `max_critical_failures` is a total across runs, not a per-run allowance.
+- Rules that could quietly pass are config errors: an empty groups list, `min_pass` below 1 or not a whole number, both `min_pass` and `min_pass_rate`, a bad `max_critical_failures`.
+- A check that returns something unreadable fails with a reason instead of stopping the run.
+- `golive diff` compares pass rates, so a flaky regression (3 of 3 to 2 of 3) counts, and removing a case that used to pass counts as a regression.
+- `--runs 0`, a group name with no cases, and a baseline that is not a results.json exit 3 before any agent call.
+- The GitHub Action clears old reports first, so a failed run never reports a stale decision; `decision` is `error` when no results were written.
+- Loading two projects whose folders share a name prefix keeps their modules apart.
+- New `rude_agent` negative control for the LLM judge example, run in CI.
+
 ## 0.1.0 (2026-11-23)
 
 - Cases from YAML, JSON, JSONL or Python lists, with groups, titles and tags.

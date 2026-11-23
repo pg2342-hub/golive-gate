@@ -84,3 +84,55 @@ def test_rule_over_several_groups(cases, checks):
     assert out.decision == NO_GO
     assert out.reasons == ["run 1: group easy+hard passed 2 of 4, needs 3 (no-go)"]
     assert evaluate(gate({"group": ["easy", "hard"], "min_pass": 2}), result).decision == GO
+
+
+def test_critical_allowance_is_a_total_across_runs(cases, checks):
+    # The same critical failure on each of 3 runs is 3 failures, not 1 per run.
+    result = run_eval(lambda x: -x if x == 2 else x * 2, cases, checks, runs=3)
+    assert evaluate(gate({"min_pass": 3}, max_critical=2), result).decision == NO_GO
+    assert evaluate(gate({"min_pass": 3}, max_critical=3), result).decision == GO
+
+
+def test_agent_crash_counts_as_critical_failure(cases, checks):
+    def crashy(x):
+        if x == 2:
+            raise RuntimeError("timeout")
+        return x * 2
+
+    result = run_eval(crashy, cases, checks)
+    out = evaluate(gate({"min_pass": 3}), result)
+    assert out.decision == NO_GO
+    assert out.critical == {1: [("a", "agent_error")]}
+
+
+def test_case_where_every_check_says_na_does_not_pass():
+    from golive_gate import CheckSet, load_cases
+
+    cs = CheckSet()
+    cs.check("only_for_x")(lambda case, out: "na")
+    result = run_eval(lambda x: x, load_cases([{"id": "a", "input": 1}]), cs)
+    assert not result.case_runs[0].passed
+    assert evaluate(gate({"min_pass": "all"}), result).decision == NO_GO
+
+
+@pytest.mark.parametrize(
+    "raw, message",
+    [
+        ({"groups": [], "min_pass": 1}, "cannot be empty"),
+        ({"min_pass": 1, "min_pass_rate": 0.5}, "not both"),
+        ({"min_pass": 0.9}, "whole number"),
+        ({"min_pass": -1}, "whole number"),
+        ({"min_pass": 0}, "whole number"),
+        ({"min_pass": True}, "whole number"),
+        ({"min_pass": "most"}, "whole number"),
+    ],
+)
+def test_rules_that_would_silently_pass_are_rejected(raw, message):
+    with pytest.raises(ValueError, match=message):
+        Rule.from_dict(raw)
+
+
+@pytest.mark.parametrize("value", [-1, 0.5, "1", True])
+def test_bad_critical_allowance_is_rejected(value):
+    with pytest.raises(ValueError, match="max_critical_failures"):
+        Gate.from_dict({"rules": [{"min_pass": 1}], "max_critical_failures": value})

@@ -7,7 +7,9 @@ Policy the store wrote down:
   - otherwise it declines, politely, and says why
 
 ``spec_agent`` follows that policy. ``naive_agent`` refunds everything, which looks
-fine on routine cases and is exactly what the gate is there to catch.
+fine on routine cases and is exactly what the gate is there to catch. ``rude_agent``
+makes every right decision but declines curtly and blames the customer: no rule can
+see that, so it is the negative control for the LLM judge check (golive.judge.yml).
 """
 
 AUTO_LIMIT = 200.0
@@ -49,3 +51,10 @@ def naive_agent(request: dict) -> dict:
         "amount": amount,
         "reply": f"Done: ${amount:.2f} is on its way back to your card.",
     }
+
+
+def rude_agent(request: dict) -> dict:
+    out = spec_agent(request)
+    if out["action"] == "decline":
+        out["reply"] = "You missed the 30-day window. That's on you, so no refund. Read the policy next time."
+    return out

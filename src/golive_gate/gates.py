@@ -36,6 +36,8 @@ class Rule:
             groups = None
         elif isinstance(raw_group, (list, tuple)):
             groups = tuple(str(g) for g in raw_group)
+            if not groups:
+                raise ValueError("a rule's groups list cannot be empty (leave it out to cover every case)")
         else:
             groups = (str(raw_group),)
         label = f"group {'+'.join(groups)}" if groups else "all cases"
@@ -45,6 +47,14 @@ class Rule:
         rate = raw.get("min_pass_rate")
         if not all_must and min_pass is None and rate is None:
             raise ValueError(f"rule {name!r} needs min_pass or min_pass_rate")
+        if min_pass is not None and rate is not None:
+            raise ValueError(f"rule {name!r}: use min_pass or min_pass_rate, not both")
+        if min_pass is not None and not all_must:
+            if isinstance(min_pass, bool) or not isinstance(min_pass, int) or min_pass < 1:
+                raise ValueError(
+                    f"rule {name!r}: min_pass must be a whole number of cases (1 or more) or 'all', "
+                    f"got {min_pass!r}; for a share of cases use min_pass_rate"
+                )
         if rate is not None and not 0 <= float(rate) <= 1:
             raise ValueError(f"rule {name!r}: min_pass_rate must be between 0 and 1")
         on_fail = raw.get("on_fail", NO_GO)
@@ -53,7 +63,7 @@ class Rule:
         return cls(
             name=name,
             groups=groups,
-            min_pass=None if all_must or min_pass is None else int(min_pass),
+            min_pass=None if all_must or min_pass is None else min_pass,
             min_pass_rate=None if rate is None else float(rate),
             all_must_pass=all_must,
             on_fail=on_fail,
@@ -80,12 +90,15 @@ class Gate:
     @classmethod
     def from_dict(cls, raw: dict) -> Gate:
         raw = raw.get("gate", raw)
+        max_crit = raw.get("max_critical_failures", 0)
+        if isinstance(max_crit, bool) or not isinstance(max_crit, int) or max_crit < 0:
+            raise ValueError(f"max_critical_failures must be a whole number, 0 or more, got {max_crit!r}")
         rules = tuple(Rule.from_dict(r) for r in raw.get("rules", []))
         if not rules:
             raise ValueError("a gate needs at least one rule")
         return cls(
             rules=rules,
-            max_critical_failures=int(raw.get("max_critical_failures", 0)),
+            max_critical_failures=max_crit,
             name=str(raw.get("name", "go-live gate")),
         )
 
@@ -136,12 +149,17 @@ class GateResult:
         }
 
 
-def evaluate(gate: Gate, result: RunResult) -> GateResult:
-    groups = {c.group for c in result.cases}
+def check_groups(gate: Gate, cases) -> None:
+    """Raise ValueError if a rule names a group with no cases (usually a typo)."""
+    groups = {c.group for c in cases}
     for rule in gate.rules:
         for g in rule.groups or ():
             if g not in groups:
                 raise ValueError(f"rule {rule.name!r} names group {g!r}, which has no cases")
+
+
+def evaluate(gate: Gate, result: RunResult) -> GateResult:
+    check_groups(gate, result.cases)
 
     outcomes: list[RuleOutcome] = []
     critical: dict[int, list[tuple[str, str]]] = {}
@@ -160,9 +178,11 @@ def evaluate(gate: Gate, result: RunResult) -> GateResult:
     problems: dict[str, list[int]] = {}
     hard_break = False
     soft_break = False
-    for run, fails in critical.items():
-        if len(fails) > gate.max_critical_failures:
-            hard_break = True
+    # The critical allowance covers all runs together: the same failure on 3 runs counts 3 times.
+    total_critical = sum(len(f) for f in critical.values())
+    if total_critical > gate.max_critical_failures:
+        hard_break = True
+        for run, fails in critical.items():
             listed = ", ".join(f"{check} on case {case}" for case, check in fails)
             problems.setdefault(f"{len(fails)} critical failure(s): {listed}", []).append(run)
     for o in outcomes:

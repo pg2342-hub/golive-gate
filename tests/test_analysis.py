@@ -1,3 +1,5 @@
+import pytest
+
 from golive_gate import CheckSet, Gate, ablate, diff, run_eval
 from golive_gate.analysis import ablation_markdown, diff_markdown
 from golive_gate.gates import evaluate
@@ -44,7 +46,7 @@ def test_diff_regressions_and_fixes(cases, checks):
     assert d.has_regressions
     back = diff(bad, good)
     assert back.fixed == ["a", "b"] and not back.has_regressions
-    assert "Regressed (passed before, fails now): a, b" in diff_markdown(d)
+    assert "Regressed (passes on fewer runs than before): a, b" in diff_markdown(d)
 
 
 def test_diff_added_and_removed(cases, checks):
@@ -52,3 +54,30 @@ def test_diff_added_and_removed(cases, checks):
     b = _results(lambda x: x * 2, cases[:3], checks)
     d = diff(a, b)
     assert d.removed == ["d"] and diff(b, a).added == ["d"]
+
+
+def test_diff_catches_flaky_regression(cases, checks):
+    calls = {"n": 0}
+
+    def flaky(x):  # case a fails on run 2 only
+        calls["n"] += 1
+        return 7 if x == 2 and calls["n"] > 4 else x * 2
+
+    good = run_eval(lambda x: x * 2, cases, checks, runs=2)
+    bad = run_eval(flaky, cases, checks, runs=2)
+    d = diff(to_dict(good, GATE, evaluate(GATE, good)), to_dict(bad, GATE, evaluate(GATE, bad)))
+    assert d.regressed == ["a"] and d.has_regressions
+
+
+def test_removing_a_passing_case_counts_as_regression(cases, checks):
+    lenient = Gate.from_dict({"rules": [{"min_pass": 1}]})
+    full = run_eval(lambda x: x * 2, cases, checks)
+    fewer = run_eval(lambda x: x * 2, cases[:3], checks)
+    d = diff(to_dict(full, lenient, evaluate(lenient, full)), to_dict(fewer, lenient, evaluate(lenient, fewer)))
+    assert d.removed == ["d"] and d.removed_passing == ["d"] and d.has_regressions
+    assert d.before == d.after == "go"
+
+
+def test_diff_rejects_files_that_are_not_results():
+    with pytest.raises(ValueError, match="not a golive results.json"):
+        diff({"decision": "go"}, {"cases": []})

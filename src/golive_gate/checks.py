@@ -39,7 +39,10 @@ class Check:
             raw = self.fn(case, output)
         except Exception as exc:  # a crashing check is a failed check, with the reason kept
             return Verdict(FAIL, f"check raised {type(exc).__name__}: {exc}")
-        return _coerce(raw)
+        try:
+            return _coerce(raw)
+        except (ValueError, TypeError):
+            return Verdict(FAIL, f"check returned {raw!r}, which is not pass, fail or na")
 
 
 def _coerce(raw: Any) -> Verdict:
@@ -49,9 +52,11 @@ def _coerce(raw: Any) -> Verdict:
         return Verdict(PASS if raw else FAIL)
     if raw is None:
         return Verdict(NA)
+    if isinstance(raw, int) and raw in (0, 1):
+        return Verdict(PASS if raw else FAIL)
     if isinstance(raw, tuple) and len(raw) == 2:
-        return Verdict(str(raw[0]), str(raw[1]))
-    return Verdict(str(raw))
+        return Verdict(str(raw[0]).strip().lower(), str(raw[1]))
+    return Verdict(str(raw).strip().lower())
 
 
 class CheckSet:

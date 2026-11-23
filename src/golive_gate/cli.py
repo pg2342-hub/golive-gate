@@ -18,7 +18,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from . import __version__, report
-from .analysis import ablate, ablation_markdown, diff, diff_markdown
+from .analysis import ablate, ablation_markdown, check_results, diff, diff_markdown
 from .config import load_project
 from .gates import NO_GO, PARTIAL, evaluate
 from .runner import run_eval
@@ -52,6 +52,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         project = load_project(args.config, agent=args.agent, runs=args.runs)
         baseline = json.loads(Path(args.baseline).read_text()) if getattr(args, "baseline", None) else None
+        if baseline is not None:
+            check_results(baseline, f"baseline {args.baseline}")
     except CONFIG_ERRORS as exc:
         print(f"golive: config error: {exc}", file=sys.stderr)
         return 3

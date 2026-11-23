@@ -31,7 +31,9 @@ Decide whether the output meets the criterion.
 Answer on one line in exactly this form, and nothing else:
 VERDICT: PASS|FAIL|NA - one short sentence saying why"""
 
-_LINE = re.compile(r"VERDICT:\s*(PASS|FAIL|NA)\b\s*[-:–]?\s*(.*)", re.IGNORECASE)
+# The verdict must be a whole line of its own that starts with VERDICT:, so a quoted format line
+# ("VERDICT: PASS|FAIL|NA") or "verdict: pass" inside reasoning can never be read as the answer.
+_LINE = re.compile(r"^VERDICT:\s*(PASS|FAIL|NA)(?![|\w])\s*(?:[-:–]\s*)?(.*)$")
 
 
 @dataclass(frozen=True)
@@ -42,11 +44,14 @@ class JudgeReply:
 
 def parse_verdict(text: str) -> Verdict:
     """Read 'VERDICT: PASS - reason'. Anything unreadable is a FAIL, never a silent pass."""
-    for line in reversed(text.strip().splitlines()):
-        m = _LINE.search(line)
-        if m:
-            return Verdict({"PASS": PASS, "FAIL": FAIL, "NA": NA}[m.group(1).upper()], m.group(2).strip())
-    return Verdict(FAIL, f"judge reply had no verdict line: {text.strip()[:200]!r}")
+    lines = [ln.strip().replace("*", "").replace("`", "").strip() for ln in text.strip().splitlines()]
+    lines = [ln for ln in lines if ln]
+    if not lines:
+        return Verdict(FAIL, "judge reply was empty")
+    m = _LINE.match(lines[-1])  # only the final line counts, as the prompt asks
+    if not m:
+        return Verdict(FAIL, f"judge reply did not end with a verdict line: {text.strip()[-200:]!r}")
+    return Verdict({"PASS": PASS, "FAIL": FAIL, "NA": NA}[m.group(1)], m.group(2).strip())
 
 
 def judge_check(

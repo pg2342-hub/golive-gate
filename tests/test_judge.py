@@ -11,9 +11,18 @@ CASE = Case(id="1", input="reset my password", expected="handoff")
     "text, result, reason",
     [
         ("VERDICT: PASS - it hands off", PASS, "it hands off"),
-        ("thinking...\nverdict: fail: promised a refund", FAIL, "promised a refund"),
+        ("thinking...\nVERDICT: FAIL: promised a refund", FAIL, "promised a refund"),
+        ("**VERDICT: PASS** - polite", PASS, "polite"),
+        ("VERDICT: PASS\n\n", PASS, ""),
+        # Only the last line counts, so an echoed rubric or a mid-reply guess can't pass the check.
+        ("VERDICT: PASS - at first glance\nOn reflection it blames the customer.", FAIL, "judge reply did not end"),
+        ("VERDICT: FAIL\nVERDICT: PASS - changed my mind", PASS, "changed my mind"),
+        ("VERDICT: PASSABLE", FAIL, "judge reply did not end"),
+        ("VERDICT: PASS|FAIL|NA", FAIL, "judge reply did not end"),
+        ("verdict: pass", FAIL, "judge reply did not end"),
+        ("", FAIL, "judge reply was empty"),
         ("VERDICT: NA", NA, ""),
-        ("I think it is fine", FAIL, "judge reply had no verdict line"),
+        ("I think it is fine", FAIL, "judge reply did not end with a verdict line"),
     ],
 )
 def test_parse_verdict(text, result, reason):

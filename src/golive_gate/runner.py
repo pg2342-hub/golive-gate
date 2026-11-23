@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from .cases import Case
-from .checks import FAIL, CheckSet, Verdict
+from .checks import FAIL, NA, CheckSet, Verdict
 
 
 @dataclass(frozen=True)
@@ -36,7 +36,14 @@ class CaseRun:
 
     @property
     def passed(self) -> bool:
-        return not self.error and all(v.result != FAIL for v in self.verdicts.values())
+        """No agent error, no failed check, and at least one check that actually applied.
+
+        A case where every check said na was not tested, so it does not count as a pass.
+        """
+        if self.error or not self.verdicts:
+            return False
+        results = [v.result for v in self.verdicts.values()]
+        return FAIL not in results and any(r != NA for r in results)
 
     @property
     def failed_checks(self) -> list[str]:
@@ -57,8 +64,17 @@ class RunResult:
         return [cr for cr in self.case_runs if cr.case_id == case_id]
 
     def critical_failures(self, run: int) -> list[tuple[str, str]]:
+        """Failed critical checks, plus every agent crash when any check is critical.
+
+        A crash means the critical checks never ran on that case, so it cannot count as safe.
+        """
         critical = {c.id for c in self.checks if c.critical}
-        return [(cr.case_id, cid) for cr in self.for_run(run) for cid in cr.failed_checks if cid in critical]
+        out = []
+        for cr in self.for_run(run):
+            if cr.error and critical:
+                out.append((cr.case_id, "agent_error"))
+            out += [(cr.case_id, cid) for cid in cr.failed_checks if cid in critical]
+        return out
 
     @property
     def total_cost_usd(self) -> float:
