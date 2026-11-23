@@ -17,7 +17,8 @@ notes = {
 }
 for path, note in notes.items():
     p = Path(path)
-    p.write_text(p.read_text().replace("</h1>", f"</h1>\n<p>{note}</p>", 1))
+    p.write_text(p.read_text().replace("</h1>", f"</h1>\n<p class='lead'>{note}</p>", 1))
 PY
+python scripts/demo_chrome.py docs/index.html docs/spec/index.html --repo golive-gate
 touch docs/.nojekyll
 echo "demo written to docs/ (naive agent) and docs/spec/ (reference agent)"

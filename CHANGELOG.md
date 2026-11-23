@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- HTML report restyled: warm paper, one evergreen accent, serif headings, line-art pass and fail marks, no external font request.
+
 ## 0.1.1 (2026-11-23)
 
 Fixes from an independent review, all places where the gate could say go when it should not:

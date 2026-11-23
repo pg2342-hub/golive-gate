@@ -1,6 +1,7 @@
 """A single self-contained HTML page for a run: drop it in docs/ and GitHub Pages serves it.
 
-No JavaScript framework, no external files besides the Inter font; every case is
+No JavaScript and no external files: the styles are inline, and the fonts fall back to
+Georgia, Helvetica and Menlo when the Field Guide fonts are not installed. Every case is
 expandable to show each check's verdict and reason.
 """
 
@@ -11,6 +12,9 @@ import json
 from typing import Any
 
 _LABEL = {"go": "GO", "partial": "PARTIAL", "no-go": "NO-GO"}
+# Line-art marks, not glyphs: a check for a case that passed every run, a cross otherwise.
+_OK = '<svg viewBox="0 0 12 12" aria-label="passed"><path d="M2.6 6.3 5 8.6 9.4 3.6"/></svg>'
+_BAD = '<svg viewBox="0 0 12 12" aria-label="failed"><path d="M3.4 3.4 8.6 8.6M8.6 3.4 3.4 8.6"/></svg>'
 
 
 def render(data: dict[str, Any], title: str = "") -> str:
@@ -61,7 +65,7 @@ def render(data: dict[str, Any], title: str = "") -> str:
         label = case["title"] or case["id"]
         case_rows.append(
             f"<details{'' if ok else ' open'}><summary><span class='mark {'ok' if ok else 'bad'}'>"
-            f"{'✓' if ok else '✗'}</span> <b>{e(label)}</b> <span class='muted'>{e(case['group'])} · "
+            f"{_OK if ok else _BAD}</span> <b>{e(label)}</b> <span class='muted'>{e(case['group'])} · "
             f"{passes} of {len(runs)} runs</span></summary>{''.join(detail)}</details>"
         )
 
@@ -70,30 +74,16 @@ def render(data: dict[str, Any], title: str = "") -> str:
         f"mean latency {summary['mean_latency_s'] * 1000:.1f} ms per case."
     )
     agent = f"Agent <code>{e(data['agent'])}</code>, " if data.get("agent") else ""
+    decision_class = {"go": "go", "partial": "partial", "no-go": "no-go"}[decision]
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f2ec">
 <title>{e(title)}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{{--fg:#111;--bg:#fff;--muted:#666;--line:#ddd;--soft:#f5f5f5}}
-@media (prefers-color-scheme:dark){{:root{{--fg:#eee;--bg:#111;--muted:#999;--line:#333;--soft:#1b1b1b}}}}
-*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--fg);
-font:15px/1.5 Inter,system-ui,sans-serif}}main{{max-width:880px;margin:0 auto;padding:32px 16px 64px}}
-h1{{font-size:28px;margin:0 0 4px}}h2{{font-size:18px;margin:32px 0 8px}}
-.decision{{display:inline-block;border:2px solid var(--fg);padding:2px 10px;font-weight:700;margin-left:6px}}
-.muted{{color:var(--muted)}}table{{border-collapse:collapse;width:100%;font-size:14px}}
-td,th{{text-align:left;border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}}
-.scroll{{overflow-x:auto}}details{{border-bottom:1px solid var(--line);padding:8px 0}}
-summary{{cursor:pointer}}.mark{{display:inline-block;width:18px;font-weight:700}}.bad{{color:var(--fg)}}
-.run{{margin:8px 0 8px 22px}}.runhead{{font-weight:600;font-size:13px}}ul{{margin:4px 0;padding-left:18px}}
-li.fail{{font-weight:600}}li.na{{color:var(--muted)}}pre{{background:var(--soft);padding:8px;overflow-x:auto;
-font-size:12px;margin:4px 0}}code{{font-size:13px}}footer{{margin-top:40px;font-size:13px}}
-</style></head><body><main>
-<h1>{e(data["gate"])} <span class="decision">{_LABEL[decision]}</span></h1>
-<p class="muted">{agent}{len(data["cases"])} cases, {data["runs"]} run(s). {e(cost)}</p>
-<ul>{reasons}</ul>
+<style>{_CSS}</style></head><body><main>
+<h1>{e(data["gate"])} <span class="decision {decision_class}">{_LABEL[decision]}</span></h1>
+<p class="lead">{agent}{len(data["cases"])} cases, {data["runs"]} run(s). {e(cost)}</p>
+<ul class="reasons">{reasons}</ul>
 <h2>Pass counts by run</h2><div class="scroll"><table><tr><th>Run</th><th>Passed</th>
 <th>Critical failures</th></tr>{by_run}</table></div>
 <h2>Gate rules</h2><div class="scroll"><table><tr><th>Rule</th><th>Run</th><th>Passed</th><th>Needs</th>
@@ -102,4 +92,43 @@ font-size:12px;margin:4px 0}}code{{font-size:13px}}footer{{margin-top:40px;font-
 <h2>Checks</h2><div class="scroll"><table>{check_rows}</table></div>
 <footer class="muted">Made with <a href="https://github.com/pg2342-hub/golive-gate">golive-gate</a>.</footer>
 </main></body></html>
+"""
+
+
+# Warm paper, warm ink, one evergreen accent. GO is the only green moment; NO-GO is solid ink.
+_CSS = """
+:root{--paper:#f4f2ec;--ink:#1b1a17;--ink-2:#57544c;--rule:rgb(27 26 23/.14);--green:#24513c;--wash:#dce6dc;
+--serif:"Libre Caslon Display",Georgia,serif;--sans:"General Sans","Helvetica Neue",Arial,sans-serif;
+--mono:"Red Hat Mono",ui-monospace,Menlo,monospace;color-scheme:light}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans)}
+::selection{background:var(--wash)}a{color:var(--green);text-underline-offset:3px}
+main{width:min(1080px,calc(100% - 64px));margin:0 auto;padding:0 0 64px}
+h1{font:400 clamp(30px,3.6vw,46px)/1.15 var(--serif);letter-spacing:-.01em;margin:56px 0 18px;text-wrap:balance}
+h2{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border:1px solid var(--ink);
+border-radius:999px;font:400 21px/1.1 var(--serif);margin:56px 0 20px}
+.lead,h1+p{font-size:18px;color:var(--ink-2);max-width:42em}.muted{color:var(--ink-2)}
+.reasons{padding-left:20px;margin:16px 0 0}.reasons li{margin:6px 0}
+.decision{display:inline-flex;align-items:center;min-height:32px;padding:0 14px;border-radius:999px;
+font:500 15px/1 var(--mono);letter-spacing:.04em;vertical-align:.25em;margin-left:8px;border:1px solid var(--ink)}
+.decision.go{background:var(--wash);border-color:var(--wash);color:var(--green)}
+.decision.no-go{background:var(--ink);color:var(--paper)}.decision.partial{border-style:dashed}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
+th{font:400 12.5px/1.4 var(--mono);letter-spacing:.02em;color:var(--ink-2);text-align:left;padding:10px 12px 10px 0;
+border-bottom:1px solid var(--ink);white-space:nowrap}
+td{text-align:left;border-bottom:1px solid var(--rule);padding:12px 12px 12px 0;vertical-align:top}
+details{border-bottom:1px solid var(--rule);padding:12px 0}summary{cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+.mark{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:999px;
+font-size:12px;margin-right:4px}.mark.ok{background:var(--wash);color:var(--green)}
+.mark.bad{background:var(--ink);color:var(--paper)}
+.mark svg{width:12px;height:12px}.mark path{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;
+stroke-linejoin:round}summary b{font-weight:500}
+.run{margin:10px 0 10px 28px}.runhead{font:400 12.5px/1.4 var(--mono);letter-spacing:.02em;color:var(--ink-2)}
+ul{margin:4px 0;padding-left:18px}li.pass::marker{color:var(--green)}li.fail{font-weight:500}li.na{color:var(--ink-2)}
+pre{font:400 12.5px/1.55 var(--mono);background:rgb(27 26 23/.045);border-radius:8px;padding:12px 14px;
+overflow-x:auto;margin:6px 0;white-space:pre-wrap;word-break:break-word}
+code{font-family:var(--mono);font-size:.86em}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font:400 13px/1.5 var(--mono)}
+@media (max-width:700px){main{width:calc(100% - 40px)}h1{margin-top:32px}h2{font-size:19px;margin-top:44px}
+.lead,h1+p{font-size:16.5px}.run{margin-left:12px}}
 """
