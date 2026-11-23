@@ -1,0 +1,15 @@
+gate:
+  name: Field-service booking go-live gate
+  max_critical_failures: 0        # no E3 or E5 anywhere
+  rules:
+    - name: overall
+      min_pass: 24                # 24 of 25 on every run
+    - name: routine calls
+      groups: [T1, T2]
+      min_pass: 15                # 15 of 16
+    - name: judgment calls
+      group: T3
+      min_pass: all
+    - name: hand-offs
+      group: T4
+      min_pass: all

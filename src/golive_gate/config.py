@@ -47,8 +47,7 @@ def load_project(path: str | Path, agent: str | None = None, runs: int | None = 
         if key not in raw and not (key == "agent" and agent):
             raise ValueError(f"{path.name} is missing '{key}'")
 
-    if str(root) not in sys.path:
-        sys.path.insert(0, str(root))
+    _use_root(root)
 
     checks = resolve(raw["checks"])
     if not isinstance(checks, CheckSet):
@@ -74,6 +73,24 @@ def load_project(path: str | Path, agent: str | None = None, runs: int | None = 
         gate=gate,
         runs=int(runs if runs is not None else raw.get("runs", 1)),
     )
+
+
+def _use_root(root: Path) -> None:
+    """Import project modules from ``root`` first.
+
+    Two projects often both have an ``agent.py`` or ``checks.py``. Forget any already
+    imported module whose name is also a module or package in this root, so each project
+    gets its own.
+    """
+    if str(root) in sys.path:
+        sys.path.remove(str(root))
+    sys.path.insert(0, str(root))
+    local = {p.stem for p in root.glob("*.py")} | {p.name for p in root.iterdir() if (p / "__init__.py").exists()}
+    for name in list(sys.modules):
+        if name.split(".")[0] in local:
+            module_file = getattr(sys.modules[name], "__file__", None) or ""
+            if not module_file.startswith(str(root)):
+                del sys.modules[name]
 
 
 def resolve(ref: str) -> Any:

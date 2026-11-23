@@ -1,0 +1,720 @@
+{
+ "cases": [
+  {
+   "id": "c01",
+   "group": "T1",
+   "title": "Hi, my AC is running but it is not cooling at all. I am at 1...",
+   "input": {
+    "channel": "call",
+    "transcript": "Hi, my AC is running but it is not cooling at all. I am at 12 Oak Lane, 63131. Can someone come out?",
+    "facts": {
+     "phone": "314-555-0101",
+     "zip": "63131",
+     "said_equipment": "ac",
+     "symptom": "no_cooling",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - AC",
+      "business_unit": "STL-HVAC",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c02",
+   "group": "T1",
+   "title": "This is the Hendricks house. We are on your protection plan ...",
+   "input": {
+    "channel": "call",
+    "transcript": "This is the Hendricks house. We are on your protection plan and I think our fall furnace tune-up is due.",
+    "facts": {
+     "phone": "314-555-0102",
+     "zip": "63141",
+     "said_equipment": "furnace",
+     "symptom": "tuneup_due_furnace",
+     "request": "maintenance"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Maintenance - Furnace Tune-Up (Plan)",
+      "business_unit": "STL-HVAC",
+      "fee": 0,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c03",
+   "group": "T1",
+   "title": "My water heater is leaking a little from the bottom. I live ...",
+   "input": {
+    "channel": "call",
+    "transcript": "My water heater is leaking a little from the bottom. I live in Nashville, 37209.",
+    "facts": {
+     "phone": "615-555-0201",
+     "zip": "37209",
+     "said_equipment": "water_heater",
+     "symptom": "water_heater_leak",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Water Heater",
+      "business_unit": "NASH-PLUMB",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c04",
+   "group": "T1",
+   "title": "Kitchen drain is clogged and backing up. I am in O'Fallon, I...",
+   "input": {
+    "channel": "call",
+    "transcript": "Kitchen drain is clogged and backing up. I am in O'Fallon, Illinois, 62269.",
+    "facts": {
+     "phone": "618-555-0301",
+     "zip": "62269",
+     "said_equipment": "drain",
+     "symptom": "clogged_drain",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Drain Clog",
+      "business_unit": "ME-PLUMB",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c05",
+   "group": "T1",
+   "title": "Do you do electrical panel upgrades? We want to go to 200 am...",
+   "input": {
+    "channel": "chat",
+    "transcript": "Do you do electrical panel upgrades? We want to go to 200 amps. 63129.",
+    "facts": {
+     "phone": "314-555-0401",
+     "zip": "63129",
+     "said_equipment": "panel",
+     "symptom": "panel_upgrade",
+     "request": "estimate"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Estimate - Electrical Panel",
+      "business_unit": "STL-ELEC",
+      "fee": null,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c06",
+   "group": "T1",
+   "title": "My washer will not drain after the cycle. 63146.",
+   "input": {
+    "channel": "call",
+    "transcript": "My washer will not drain after the cycle. 63146.",
+    "facts": {
+     "phone": "314-555-0501",
+     "zip": "63146",
+     "said_equipment": "washer",
+     "symptom": "washer_wont_drain",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Washer",
+      "business_unit": "STL-APPL",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c07",
+   "group": "T1",
+   "title": "[Angi lead] Name: R. Patel. Address: 44 Elm St, 63017. Probl...",
+   "input": {
+    "channel": "lead_form",
+    "transcript": "[Angi lead] Name: R. Patel. Address: 44 Elm St, 63017. Problem: AC not cooling. Phone: 314-555-0601.",
+    "facts": {
+     "phone": "314-555-0601",
+     "zip": "63017",
+     "said_equipment": "ac",
+     "symptom": "no_cooling",
+     "request": "repair",
+     "lead_source": "Angi"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - AC",
+      "business_unit": "STL-HVAC",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal",
+      "campaign": "Angi"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c08",
+   "group": "T1",
+   "title": "I have an AC repair booked for Tuesday afternoon. Can we mov...",
+   "input": {
+    "channel": "call",
+    "transcript": "I have an AC repair booked for Tuesday afternoon. Can we move it to Thursday afternoon instead?",
+    "facts": {
+     "phone": "314-555-0107",
+     "zip": "63141",
+     "request": "reschedule",
+     "existing_job_id": "J-1001",
+     "accepts_slot": "D3-PM"
+    }
+   },
+   "expected": {
+    "action": "reschedule",
+    "reschedule": {
+     "job_id": "J-1001",
+     "slot": "D3-PM"
+    },
+    "jobs": []
+   }
+  },
+  {
+   "id": "c09",
+   "group": "T2",
+   "title": "We are thinking about replacing our heat pump, and while you...",
+   "input": {
+    "channel": "call",
+    "transcript": "We are thinking about replacing our heat pump, and while you are here, our water heater is 15 years old. Can I get prices on both? 63131.",
+    "facts": {
+     "phone": "314-555-0106",
+     "zip": "63131",
+     "said_equipment": "heat_pump",
+     "symptom": "heat_pump_replace",
+     "request": "estimate",
+     "second_symptom": "water_heater_replace"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Estimate - Heat Pump",
+      "business_unit": "STL-HVAC",
+      "fee": null,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     },
+     {
+      "job_type": "Estimate - Water Heater",
+      "business_unit": "STL-PLUMB",
+      "fee": null,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c10",
+   "group": "T2",
+   "title": "Hi, I am calling from my new cell. We are members. The furna...",
+   "input": {
+    "channel": "call",
+    "transcript": "Hi, I am calling from my new cell. We are members. The furnace is making a banging noise. 21 Birch Ct, 63125.",
+    "facts": {
+     "phone": "314-555-0999",
+     "zip": "63125",
+     "street": "21 Birch Ct",
+     "said_equipment": "furnace",
+     "symptom": "noisy_furnace",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Furnace",
+      "business_unit": "STL-HVAC",
+      "fee": 49,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c11",
+   "group": "T2",
+   "title": "I think my furnace is broken. There is no hot water anywhere...",
+   "input": {
+    "channel": "call",
+    "transcript": "I think my furnace is broken. There is no hot water anywhere in the house this morning. 63131.",
+    "facts": {
+     "phone": "314-555-0101",
+     "zip": "63131",
+     "said_equipment": "furnace",
+     "symptom": "no_hot_water",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Water Heater",
+      "business_unit": "STL-PLUMB",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c12",
+   "group": "T2",
+   "title": "[11:05 PM text] bathroom faucet has a slow drip, not urgent,...",
+   "input": {
+    "channel": "sms",
+    "received": "23:05",
+    "transcript": "[11:05 PM text] bathroom faucet has a slow drip, not urgent, whenever you can. 63141",
+    "facts": {
+     "phone": "314-555-0701",
+     "zip": "63141",
+     "said_equipment": "faucet",
+     "symptom": "faucet_drip",
+     "request": "repair",
+     "after_hours": true
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Faucet",
+      "business_unit": "STL-PLUMB",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c13",
+   "group": "T2",
+   "title": "I need someone at my rental house in 63129, the AC is not co...",
+   "input": {
+    "channel": "call",
+    "transcript": "I need someone at my rental house in 63129, the AC is not cooling. My own house is on your plan.",
+    "facts": {
+     "phone": "314-555-0104",
+     "zip": "63129",
+     "said_equipment": "ac",
+     "symptom": "no_cooling",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - AC",
+      "business_unit": "STL-HVAC",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c14",
+   "group": "T2",
+   "title": "Our furnace is making a loud noise. We are near Edwardsville...",
+   "input": {
+    "channel": "call",
+    "transcript": "Our furnace is making a loud noise. We are near Edwardsville. [Agent asks for the address] It is 9 Main St, 62025.",
+    "facts": {
+     "phone": "618-555-0801",
+     "zip": null,
+     "zip_after_ask": "62025",
+     "said_equipment": "furnace",
+     "symptom": "noisy_furnace",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "asked_for_address": true,
+    "jobs": [
+     {
+      "job_type": "Repair - Furnace",
+      "business_unit": "ME-HVAC",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c15",
+   "group": "T2",
+   "title": "Can you come Saturday for the washer? [Agent: no Saturday op...",
+   "input": {
+    "channel": "call",
+    "transcript": "Can you come Saturday for the washer? [Agent: no Saturday openings; offers next windows] Wednesday afternoon works. We are in 63131.",
+    "facts": {
+     "phone": "314-555-0901",
+     "zip": "63131",
+     "said_equipment": "washer",
+     "symptom": "washer_wont_drain",
+     "request": "repair",
+     "requested_day": "Saturday",
+     "accepts_slot": "D2-PM"
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Washer",
+      "business_unit": "STL-APPL",
+      "fee": 95,
+      "slot": "D2-PM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c16",
+   "group": "T2",
+   "title": "With the storm I know you are busy. Our faucet has a small d...",
+   "input": {
+    "channel": "call",
+    "storm_day": true,
+    "transcript": "With the storm I know you are busy. Our faucet has a small drip, no rush. 63146.",
+    "facts": {
+     "phone": "314-555-1001",
+     "zip": "63146",
+     "said_equipment": "faucet",
+     "symptom": "faucet_drip",
+     "request": "repair"
+    },
+    "fsm_overrides": {
+     "remove_slots": [
+      "D1-AM",
+      "D1-PM"
+     ]
+    }
+   },
+   "expected": {
+    "action": "book",
+    "jobs": [
+     {
+      "job_type": "Repair - Faucet",
+      "business_unit": "STL-PLUMB",
+      "fee": 95,
+      "slot": "D2-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c17",
+   "group": "T3",
+   "title": "We are members, I think. The AC is not cooling. 63146.",
+   "input": {
+    "channel": "call",
+    "transcript": "We are members, I think. The AC is not cooling. 63146.",
+    "facts": {
+     "phone": "314-555-0105",
+     "zip": "63146",
+     "said_equipment": "ac",
+     "symptom": "no_cooling",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book_flag",
+    "flags": [
+     "membership"
+    ],
+    "offers": [
+     "renewal"
+    ],
+    "jobs": [
+     {
+      "job_type": "Repair - AC",
+      "business_unit": "STL-HVAC",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c18",
+   "group": "T3",
+   "title": "We have no heat. I honestly do not know if it is a boiler or...",
+   "input": {
+    "channel": "call",
+    "transcript": "We have no heat. I honestly do not know if it is a boiler or a furnace, it is in the basement. 63131.",
+    "facts": {
+     "phone": "314-555-1101",
+     "zip": "63131",
+     "said_equipment": "unknown",
+     "symptom": "no_heat_unknown_system",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "book_flag",
+    "flags": [
+     "job_type"
+    ],
+    "jobs": [
+     {
+      "job_type": "Diagnostic - Heating",
+      "business_unit": "STL-HVAC",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c19",
+   "group": "T3",
+   "title": "I own a rental in 63141 and my tenant says the drain is clog...",
+   "input": {
+    "channel": "call",
+    "transcript": "I own a rental in 63141 and my tenant says the drain is clogged. Please send the bill to me, not the tenant.",
+    "facts": {
+     "phone": "314-555-1201",
+     "zip": "63141",
+     "said_equipment": "drain",
+     "symptom": "clogged_drain",
+     "request": "repair",
+     "payer_differs": true
+    }
+   },
+   "expected": {
+    "action": "book_flag",
+    "flags": [
+     "billing"
+    ],
+    "jobs": [
+     {
+      "job_type": "Repair - Drain Clog",
+      "business_unit": "STL-PLUMB",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c20",
+   "group": "T3",
+   "title": "I saw an ad for a $29 service call. The washer is not draini...",
+   "input": {
+    "channel": "call",
+    "transcript": "I saw an ad for a $29 service call. The washer is not draining. 63017.",
+    "facts": {
+     "phone": "314-555-1301",
+     "zip": "63017",
+     "said_equipment": "washer",
+     "symptom": "washer_wont_drain",
+     "request": "repair",
+     "promo_claimed": "$29 service call"
+    }
+   },
+   "expected": {
+    "action": "book_flag",
+    "flags": [
+     "promotion"
+    ],
+    "jobs": [
+     {
+      "job_type": "Repair - Washer",
+      "business_unit": "STL-APPL",
+      "fee": 95,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c21",
+   "group": "T3",
+   "title": "We are plan members and the AC stopped cooling. Can someone ...",
+   "input": {
+    "channel": "call",
+    "transcript": "We are plan members and the AC stopped cooling. Can someone come today? 63131.",
+    "facts": {
+     "phone": "314-555-0106",
+     "zip": "63131",
+     "said_equipment": "ac",
+     "symptom": "no_cooling",
+     "request": "repair",
+     "wants_same_day": true
+    },
+    "fsm_overrides": {
+     "remove_slots": [
+      "D0-EVE"
+     ]
+    }
+   },
+   "expected": {
+    "action": "book_flag",
+    "flags": [
+     "priority"
+    ],
+    "jobs": [
+     {
+      "job_type": "Repair - AC",
+      "business_unit": "STL-HVAC",
+      "fee": 49,
+      "slot": "D1-AM",
+      "priority": "Normal"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c22",
+   "group": "T4",
+   "title": "I smell gas in the basement near the furnace. Can you send s...",
+   "input": {
+    "channel": "call",
+    "transcript": "I smell gas in the basement near the furnace. Can you send someone?",
+    "facts": {
+     "phone": "314-555-1401",
+     "zip": "63141",
+     "said_equipment": "furnace",
+     "request": "repair",
+     "safety": "gas_smell"
+    }
+   },
+   "expected": {
+    "action": "handoff",
+    "handoff_to": "CSR",
+    "safety_instruction": true,
+    "jobs": []
+   }
+  },
+  {
+   "id": "c23",
+   "group": "T4",
+   "title": "My AC is not cooling. I am in Kansas City, 64105.",
+   "input": {
+    "channel": "call",
+    "transcript": "My AC is not cooling. I am in Kansas City, 64105.",
+    "facts": {
+     "phone": "816-555-1501",
+     "zip": "64105",
+     "said_equipment": "ac",
+     "symptom": "no_cooling",
+     "request": "repair"
+    }
+   },
+   "expected": {
+    "action": "decline",
+    "jobs": []
+   }
+  },
+  {
+   "id": "c24",
+   "group": "T4",
+   "title": "This is the manager at Rosa's Trattoria. Our walk-in cooler ...",
+   "input": {
+    "channel": "call",
+    "transcript": "This is the manager at Rosa's Trattoria. Our walk-in cooler is down. 63017.",
+    "facts": {
+     "phone": "314-555-1601",
+     "zip": "63017",
+     "said_equipment": "walk_in_cooler",
+     "request": "repair",
+     "property_type": "commercial"
+    }
+   },
+   "expected": {
+    "action": "handoff",
+    "handoff_to": "COMM",
+    "jobs": []
+   }
+  },
+  {
+   "id": "c25",
+   "group": "T4",
+   "title": "I want to dispute the bill from last week's visit. I was cha...",
+   "input": {
+    "channel": "call",
+    "transcript": "I want to dispute the bill from last week's visit. I was charged for parts I did not need.",
+    "facts": {
+     "phone": "314-555-0101",
+     "zip": "63131",
+     "request": "billing_dispute"
+    }
+   },
+   "expected": {
+    "action": "handoff",
+    "handoff_to": "CSR",
+    "jobs": []
+   }
+  }
+ ]
+}

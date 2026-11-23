@@ -26,6 +26,14 @@ Refund agent go-live gate: NO-GO
 
 The naive agent refunds everything. It passes every routine case, which is exactly why a pass rate alone is not a go-live decision.
 
+## Examples
+
+| Example | What it shows |
+|---|---|
+| [refund_agent](examples/refund_agent) | The smallest complete project: 12 cases, five checks (two critical), a gate with a partial rule, and an optional LLM judge check |
+| [field_service_booking](examples/field_service_booking) | 25 booking calls for a home-services company, a full grader with six error codes, and tiered gate rules (T1-T2 15 of 16, every T3 and T4) |
+| [voice_screening](examples/voice_screening) | Recorded calls from three setups graded as-is: the candidate is blocked by one promise of a shift, then passes after a prompt fix, and `golive diff` shows what changed |
+
 ## Install
 
 ```

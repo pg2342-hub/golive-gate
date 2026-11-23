@@ -79,3 +79,29 @@ def test_html_page_written(tmp_path):
     assert page.startswith("<!doctype html>")
     assert "NO-GO" in page and "Fraud flag, $25" in page and "fraud_handoff" in page
     assert "<script" not in page
+
+
+BOOKING = Path(__file__).resolve().parents[1] / "examples" / "field_service_booking" / "golive.yml"
+
+
+def test_booking_example_matches_original_harness(tmp_path):
+    # Same results as the standalone harness it was ported from: reference 25/25, naive 5/25, 7 critical.
+    assert main(["run", str(BOOKING), "--runs", "1", "--out", str(tmp_path / "s")]) == 0
+    assert main(["run", str(BOOKING), "--agent", "agent:naive_agent", "--runs", "1", "--out", str(tmp_path / "n")]) == 1
+    naive = json.loads((tmp_path / "n" / "results.json").read_text())
+    assert naive["summary"]["by_run"] == [{"run": 1, "passed": 5, "total": 25, "critical": 7}]
+    # And the refund example still loads its own agent.py afterwards.
+    assert main(["run", str(EXAMPLE), "--runs", "1", "--out", str(tmp_path / "r")]) == 0
+
+
+VOICE = Path(__file__).resolve().parents[1] / "examples" / "voice_screening" / "golive.yml"
+
+
+@pytest.mark.parametrize(
+    "agent, code, passed, critical",
+    [("agent:current", 1, 14, 1), ("agent:candidate_v1", 1, 25, 1), ("agent:candidate_v2", 0, 26, 0)],
+)
+def test_voice_example(tmp_path, agent, code, passed, critical):
+    assert main(["run", str(VOICE), "--agent", agent, "--out", str(tmp_path)]) == code
+    data = json.loads((tmp_path / "results.json").read_text())
+    assert data["summary"]["by_run"] == [{"run": 1, "passed": passed, "total": 30, "critical": critical}]

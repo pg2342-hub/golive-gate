@@ -75,3 +75,12 @@ def test_unknown_group_is_an_error(cases, checks):
     result = run_eval(lambda x: x * 2, cases, checks)
     with pytest.raises(ValueError, match="no cases"):
         evaluate(gate({"group": "missing", "min_pass": 1}), result)
+
+
+def test_rule_over_several_groups(cases, checks):
+    result = run_eval(lambda x: 99 if x in (2, 0) else x * 2, cases, checks)
+    rule = {"groups": ["easy", "hard"], "min_pass": 3}
+    out = evaluate(gate(rule), result)
+    assert out.decision == NO_GO
+    assert out.reasons == ["run 1: group easy+hard passed 2 of 4, needs 3 (no-go)"]
+    assert evaluate(gate({"group": ["easy", "hard"], "min_pass": 2}), result).decision == GO

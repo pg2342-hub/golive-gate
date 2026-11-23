@@ -23,7 +23,7 @@ GO, PARTIAL, NO_GO = "go", "partial", "no-go"
 @dataclass(frozen=True)
 class Rule:
     name: str
-    group: str | None = None  # None means every case
+    groups: tuple[str, ...] | None = None  # None means every case
     min_pass: int | None = None  # an int, or None when min_pass_rate is used
     min_pass_rate: float | None = None
     all_must_pass: bool = False
@@ -31,8 +31,15 @@ class Rule:
 
     @classmethod
     def from_dict(cls, raw: dict) -> Rule:
-        group = raw.get("group")
-        name = raw.get("name") or (f"group {group}" if group else "all cases")
+        raw_group = raw.get("group", raw.get("groups"))
+        if raw_group is None:
+            groups = None
+        elif isinstance(raw_group, (list, tuple)):
+            groups = tuple(str(g) for g in raw_group)
+        else:
+            groups = (str(raw_group),)
+        label = f"group {'+'.join(groups)}" if groups else "all cases"
+        name = raw.get("name") or label
         min_pass = raw.get("min_pass")
         all_must = min_pass == "all"
         rate = raw.get("min_pass_rate")
@@ -45,7 +52,7 @@ class Rule:
             raise ValueError(f"rule {name!r}: on_fail must be 'no-go' or 'partial'")
         return cls(
             name=name,
-            group=str(group) if group is not None else None,
+            groups=groups,
             min_pass=None if all_must or min_pass is None else int(min_pass),
             min_pass_rate=None if rate is None else float(rate),
             all_must_pass=all_must,
@@ -60,7 +67,7 @@ class Rule:
         return math.ceil(round(self.min_pass_rate * total, 9))
 
     def describe(self, total: int) -> str:
-        scope = f"group {self.group}" if self.group else "all cases"
+        scope = f"group {'+'.join(self.groups)}" if self.groups else "all cases"
         return f"{self.required(total)} of {total} in {scope}"
 
 
@@ -132,15 +139,16 @@ class GateResult:
 def evaluate(gate: Gate, result: RunResult) -> GateResult:
     groups = {c.group for c in result.cases}
     for rule in gate.rules:
-        if rule.group is not None and rule.group not in groups:
-            raise ValueError(f"rule {rule.name!r} names group {rule.group!r}, which has no cases")
+        for g in rule.groups or ():
+            if g not in groups:
+                raise ValueError(f"rule {rule.name!r} names group {g!r}, which has no cases")
 
     outcomes: list[RuleOutcome] = []
     critical: dict[int, list[tuple[str, str]]] = {}
     for run in range(1, result.runs + 1):
         rows = result.for_run(run)
         for rule in gate.rules:
-            scoped = [r for r in rows if rule.group is None or r.group == rule.group]
+            scoped = [r for r in rows if rule.groups is None or r.group in rule.groups]
             outcomes.append(
                 RuleOutcome(rule, run, sum(r.passed for r in scoped), len(scoped), rule.required(len(scoped)))
             )

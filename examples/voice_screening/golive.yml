@@ -1,0 +1,5 @@
+cases: cases.json
+checks: checks:checks
+agent: agent:candidate_v2
+gate: gate.yml
+runs: 1   # recorded calls do not change between runs

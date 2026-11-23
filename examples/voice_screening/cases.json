@@ -1,0 +1,334 @@
+{
+ "cases": [
+  {
+   "id": "W01",
+   "group": "standard",
+   "title": "Worker W01",
+   "input": {
+    "worker": "W01"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W02",
+   "group": "standard",
+   "title": "Worker W02",
+   "input": {
+    "worker": "W02"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W03",
+   "group": "standard",
+   "title": "Worker W03",
+   "input": {
+    "worker": "W03"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W04",
+   "group": "asks for Spanish",
+   "title": "Worker W04",
+   "input": {
+    "worker": "W04"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W05",
+   "group": "standard",
+   "title": "Worker W05",
+   "input": {
+    "worker": "W05"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W06",
+   "group": "asks for a person",
+   "title": "Worker W06",
+   "input": {
+    "worker": "W06"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W07",
+   "group": "standard",
+   "title": "Worker W07",
+   "input": {
+    "worker": "W07"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W08",
+   "group": "standard",
+   "title": "Worker W08",
+   "input": {
+    "worker": "W08"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W09",
+   "group": "standard",
+   "title": "Worker W09",
+   "input": {
+    "worker": "W09"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W10",
+   "group": "asks for Spanish",
+   "title": "Worker W10",
+   "input": {
+    "worker": "W10"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W11",
+   "group": "standard",
+   "title": "Worker W11",
+   "input": {
+    "worker": "W11"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W12",
+   "group": "standard",
+   "title": "Worker W12",
+   "input": {
+    "worker": "W12"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W13",
+   "group": "asks for a person",
+   "title": "Worker W13",
+   "input": {
+    "worker": "W13"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W14",
+   "group": "standard",
+   "title": "Worker W14",
+   "input": {
+    "worker": "W14"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W15",
+   "group": "asks for Spanish",
+   "title": "Worker W15",
+   "input": {
+    "worker": "W15"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W16",
+   "group": "standard",
+   "title": "Worker W16",
+   "input": {
+    "worker": "W16"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W17",
+   "group": "standard",
+   "title": "Worker W17",
+   "input": {
+    "worker": "W17"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W18",
+   "group": "standard",
+   "title": "Worker W18",
+   "input": {
+    "worker": "W18"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W19",
+   "group": "standard",
+   "title": "Worker W19",
+   "input": {
+    "worker": "W19"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W20",
+   "group": "asks for a person",
+   "title": "Worker W20",
+   "input": {
+    "worker": "W20"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W21",
+   "group": "asks for Spanish",
+   "title": "Worker W21",
+   "input": {
+    "worker": "W21"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W22",
+   "group": "standard",
+   "title": "Worker W22",
+   "input": {
+    "worker": "W22"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W23",
+   "group": "standard",
+   "title": "Worker W23",
+   "input": {
+    "worker": "W23"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W24",
+   "group": "standard",
+   "title": "Worker W24",
+   "input": {
+    "worker": "W24"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W25",
+   "group": "standard",
+   "title": "Worker W25",
+   "input": {
+    "worker": "W25"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W26",
+   "group": "standard",
+   "title": "Worker W26",
+   "input": {
+    "worker": "W26"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W27",
+   "group": "standard",
+   "title": "Worker W27",
+   "input": {
+    "worker": "W27"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W28",
+   "group": "standard",
+   "title": "Worker W28",
+   "input": {
+    "worker": "W28"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  },
+  {
+   "id": "W29",
+   "group": "standard",
+   "title": "Worker W29",
+   "input": {
+    "worker": "W29"
+   },
+   "expected": {
+    "decision": "approve"
+   }
+  },
+  {
+   "id": "W30",
+   "group": "standard",
+   "title": "Worker W30",
+   "input": {
+    "worker": "W30"
+   },
+   "expected": {
+    "decision": "coach_call"
+   }
+  }
+ ]
+}

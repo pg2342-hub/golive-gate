@@ -1,0 +1,5 @@
+cases: cases.json
+checks: checks:checks
+agent: agent:spec_agent
+gate: gate.yml
+runs: 3

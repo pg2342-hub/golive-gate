@@ -1,0 +1,344 @@
+{
+ "_note": "Constructed test data for a mock field service system: business units, ZIP coverage, customers, memberships and capacity. Not from any real company.",
+ "fees": {
+  "standard_service": 95,
+  "member_service": 49,
+  "plan_tuneup": 0,
+  "estimate": null
+ },
+ "business_units": {
+  "STL-HVAC": {
+   "market": "St. Louis",
+   "trade": "HVAC",
+   "zips": [
+    "63017",
+    "63125",
+    "63129",
+    "63131",
+    "63141",
+    "63146"
+   ]
+  },
+  "STL-PLUMB": {
+   "market": "St. Louis",
+   "trade": "Plumbing",
+   "zips": [
+    "63017",
+    "63125",
+    "63129",
+    "63131",
+    "63141",
+    "63146"
+   ]
+  },
+  "STL-ELEC": {
+   "market": "St. Louis",
+   "trade": "Electrical",
+   "zips": [
+    "63017",
+    "63125",
+    "63129",
+    "63131",
+    "63141",
+    "63146"
+   ]
+  },
+  "STL-APPL": {
+   "market": "St. Louis",
+   "trade": "Appliance",
+   "zips": [
+    "63017",
+    "63125",
+    "63129",
+    "63131",
+    "63141",
+    "63146"
+   ]
+  },
+  "ME-PLUMB": {
+   "market": "St. Louis (Illinois side)",
+   "trade": "Plumbing",
+   "zips": [
+    "62025",
+    "62269",
+    "62208"
+   ]
+  },
+  "ME-HVAC": {
+   "market": "St. Louis (Illinois side)",
+   "trade": "HVAC",
+   "zips": [
+    "62025",
+    "62269",
+    "62208"
+   ]
+  },
+  "NASH-HVAC": {
+   "market": "Nashville",
+   "trade": "HVAC",
+   "zips": [
+    "37204",
+    "37209",
+    "37211",
+    "37215"
+   ]
+  },
+  "NASH-PLUMB": {
+   "market": "Nashville",
+   "trade": "Plumbing",
+   "zips": [
+    "37204",
+    "37209",
+    "37211",
+    "37215"
+   ]
+  },
+  "COMM": {
+   "market": "St. Louis",
+   "trade": "Commercial",
+   "zips": [
+    "63017",
+    "63125",
+    "63129",
+    "63131",
+    "63141",
+    "63146"
+   ],
+   "residential_booking": false
+  }
+ },
+ "equipment": {
+  "ac": {
+   "trade": "HVAC",
+   "repair": "Repair - AC",
+   "maintenance": "Maintenance - AC Tune-Up (Plan)",
+   "estimate": "Estimate - AC Replacement"
+  },
+  "furnace": {
+   "trade": "HVAC",
+   "repair": "Repair - Furnace",
+   "maintenance": "Maintenance - Furnace Tune-Up (Plan)",
+   "estimate": "Estimate - Furnace Replacement"
+  },
+  "heat_pump": {
+   "trade": "HVAC",
+   "repair": "Repair - Heat Pump",
+   "estimate": "Estimate - Heat Pump"
+  },
+  "boiler": {
+   "trade": "HVAC",
+   "repair": "Repair - Boiler"
+  },
+  "heating_unknown": {
+   "trade": "HVAC",
+   "repair": "Diagnostic - Heating"
+  },
+  "water_heater": {
+   "trade": "Plumbing",
+   "repair": "Repair - Water Heater",
+   "estimate": "Estimate - Water Heater"
+  },
+  "drain": {
+   "trade": "Plumbing",
+   "repair": "Repair - Drain Clog"
+  },
+  "faucet": {
+   "trade": "Plumbing",
+   "repair": "Repair - Faucet"
+  },
+  "panel": {
+   "trade": "Electrical",
+   "estimate": "Estimate - Electrical Panel"
+  },
+  "washer": {
+   "trade": "Appliance",
+   "repair": "Repair - Washer"
+  }
+ },
+ "symptoms": {
+  "no_cooling": "ac",
+  "tuneup_due_furnace": "furnace",
+  "water_heater_leak": "water_heater",
+  "clogged_drain": "drain",
+  "panel_upgrade": "panel",
+  "washer_wont_drain": "washer",
+  "heat_pump_replace": "heat_pump",
+  "water_heater_replace": "water_heater",
+  "no_hot_water": "water_heater",
+  "faucet_drip": "faucet",
+  "no_heat_unknown_system": "heating_unknown",
+  "noisy_furnace": "furnace"
+ },
+ "customers": [
+  {
+   "id": "C-100",
+   "phones": [
+    "314-555-0101"
+   ],
+   "locations": [
+    {
+     "id": "L-100",
+     "zip": "63131",
+     "membership": null
+    }
+   ]
+  },
+  {
+   "id": "C-101",
+   "phones": [
+    "314-555-0102"
+   ],
+   "locations": [
+    {
+     "id": "L-101",
+     "zip": "63141",
+     "membership": {
+      "plan": "Home Protection Plan",
+      "status": "active",
+      "expires": "2027-05-01"
+     }
+    }
+   ]
+  },
+  {
+   "id": "C-102",
+   "phones": [
+    "314-555-0103"
+   ],
+   "locations": [
+    {
+     "id": "L-102",
+     "zip": "63125",
+     "street": "21 Birch Ct",
+     "membership": {
+      "plan": "Home Protection Plan",
+      "status": "active",
+      "expires": "2027-02-01"
+     }
+    }
+   ]
+  },
+  {
+   "id": "C-103",
+   "phones": [
+    "314-555-0104"
+   ],
+   "locations": [
+    {
+     "id": "L-103a",
+     "zip": "63017",
+     "membership": {
+      "plan": "Home Protection Plan",
+      "status": "active",
+      "expires": "2027-08-01"
+     }
+    },
+    {
+     "id": "L-103b",
+     "zip": "63129",
+     "membership": null
+    }
+   ]
+  },
+  {
+   "id": "C-104",
+   "phones": [
+    "314-555-0105"
+   ],
+   "locations": [
+    {
+     "id": "L-104",
+     "zip": "63146",
+     "membership": {
+      "plan": "Home Protection Plan",
+      "status": "expired",
+      "expires": "2026-10-15"
+     }
+    }
+   ]
+  },
+  {
+   "id": "C-105",
+   "phones": [
+    "314-555-0106"
+   ],
+   "locations": [
+    {
+     "id": "L-105",
+     "zip": "63131",
+     "membership": {
+      "plan": "Home Protection Plan",
+      "status": "active",
+      "expires": "2027-01-10"
+     }
+    }
+   ]
+  },
+  {
+   "id": "C-106",
+   "phones": [
+    "314-555-0107"
+   ],
+   "locations": [
+    {
+     "id": "L-106",
+     "zip": "63141",
+     "membership": null
+    }
+   ],
+   "open_jobs": [
+    {
+     "id": "J-1001",
+     "job_type": "Repair - AC",
+     "business_unit": "STL-HVAC",
+     "slot": "D1-PM"
+    }
+   ]
+  }
+ ],
+ "slots": [
+  {
+   "id": "D0-EVE",
+   "day": "Monday (call day)",
+   "window": "6-9 PM",
+   "kind": "emergency"
+  },
+  {
+   "id": "D1-AM",
+   "day": "Tuesday",
+   "window": "8-11 AM",
+   "kind": "routine"
+  },
+  {
+   "id": "D1-PM",
+   "day": "Tuesday",
+   "window": "12-3 PM",
+   "kind": "routine"
+  },
+  {
+   "id": "D2-AM",
+   "day": "Wednesday",
+   "window": "8-11 AM",
+   "kind": "routine"
+  },
+  {
+   "id": "D2-PM",
+   "day": "Wednesday",
+   "window": "12-3 PM",
+   "kind": "routine"
+  },
+  {
+   "id": "D3-AM",
+   "day": "Thursday",
+   "window": "8-11 AM",
+   "kind": "routine"
+  },
+  {
+   "id": "D3-PM",
+   "day": "Thursday",
+   "window": "12-3 PM",
+   "kind": "routine"
+  }
+ ],
+ "_slots_note": "D0 is the call day, D1 the next business day. D3 is Thursday in reschedule cases and there is no Saturday capacity. Every business unit has the same open slots unless a case overrides them."
+}

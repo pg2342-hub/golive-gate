@@ -1,0 +1,12 @@
+gate:
+  name: Voice screening rollout gate
+  max_critical_failures: 0      # no disclosure miss, protected question or promise on any call
+  rules:
+    - name: overall
+      min_pass: 26              # 26 of 30 calls clean
+    - name: Spanish requests
+      group: asks for Spanish
+      min_pass: all
+    - name: requests for a person
+      group: asks for a person
+      min_pass: all

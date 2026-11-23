@@ -14,4 +14,7 @@
 - Self-contained HTML report (`index.html`) for GitHub Pages, and a demo page for this repo.
 - Composite GitHub Action with a `decision` output, tested on this repo.
 - Release workflow for PyPI trusted publishing.
+- Gate rules can cover several groups (`groups: [T1, T2]`).
+- Projects that share module names (agent.py, checks.py) load side by side.
+- Field-service booking and voice screening examples.
 - Refund agent example: a policy-following agent that passes and a naive one the gate blocks.
