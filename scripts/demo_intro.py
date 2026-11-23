@@ -22,6 +22,14 @@ AGENTS = [
 ]
 ARROW = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg>'
 LABEL = {"go": "GO", "partial": "PARTIAL", "no-go": "NO-GO"}
+BACK = (
+    '<style>.back{display:inline-flex;align-items:center;gap:6px;margin-top:32px;font:400 13px/1 var(--mono);'
+    'letter-spacing:.02em;color:var(--green);text-decoration:none}.back:hover{text-decoration:underline;'
+    'text-underline-offset:3px}.back svg{width:11px;height:11px}.back path{fill:none;stroke:currentColor;'
+    'stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.back+h1{margin-top:20px}</style>'
+    '<a class="back" href="../"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2.5 4 6l3.5 3.5"/></svg>'
+    "Back to golive-gate</a>"
+)
 
 
 def summary(d):
@@ -40,7 +48,8 @@ def summary(d):
 cards = []
 for slug, name, what in AGENTS:
     d = json.loads((DOCS / slug / "results.json").read_text())
-    (DOCS / slug / "index.html").write_text(render(d, heading=name), encoding="utf-8")
+    report = render(d, heading=name).replace("<main>", "<main>" + BACK, 1)
+    (DOCS / slug / "index.html").write_text(report, encoding="utf-8")
     dec = d["decision"]
     cards.append(
         f'<a class="agent" href="{slug}/"><span class="agent__top"><span class="agent__name">{html.escape(name)}</span>'
