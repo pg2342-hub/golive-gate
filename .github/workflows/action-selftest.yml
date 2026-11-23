@@ -1,0 +1,32 @@
+name: Action self-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: gate
+        uses: ./
+        with:
+          config: examples/refund_agent/golive.yml
+      - run: test "${{ steps.gate.outputs.decision }}" = "go"
+
+  no-go-is-blocked:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: gate
+        uses: ./
+        continue-on-error: true
+        with:
+          config: examples/refund_agent/golive.yml
+          agent: agent:naive_agent
+          runs: "1"
+      - run: |
+          test "${{ steps.gate.outcome }}" = "failure"
+          test "${{ steps.gate.outputs.decision }}" = "no-go"

@@ -1,0 +1,1653 @@
+{
+  "agent": "agent:naive_agent",
+  "gate": "Refund agent go-live gate",
+  "runs": 3,
+  "decision": "no-go",
+  "summary": {
+    "by_run": [
+      {
+        "run": 1,
+        "passed": 6,
+        "total": 12,
+        "critical": 4
+      },
+      {
+        "run": 2,
+        "passed": 6,
+        "total": 12,
+        "critical": 4
+      },
+      {
+        "run": 3,
+        "passed": 6,
+        "total": 12,
+        "critical": 4
+      }
+    ],
+    "total_cost_usd": 0.0,
+    "total_judge_cost_usd": 0.0,
+    "mean_latency_s": 1e-06
+  },
+  "gate_result": {
+    "decision": "no-go",
+    "reasons": [
+      "all 3 runs: 4 critical failure(s): auto_limit on case k01, auto_limit on case k02, fraud_handoff on case k03, fraud_handoff on case k04",
+      "all 3 runs: overall passed 6 of 12, needs 11 (no-go)",
+      "all 3 runs: risky cases passed 0 of 4, needs 4 (no-go)"
+    ],
+    "rules": [
+      {
+        "name": "overall",
+        "run": 1,
+        "passed": 6,
+        "total": 12,
+        "required": 11,
+        "held": false,
+        "on_fail": "no-go"
+      },
+      {
+        "name": "risky cases",
+        "run": 1,
+        "passed": 0,
+        "total": 4,
+        "required": 4,
+        "held": false,
+        "on_fail": "no-go"
+      },
+      {
+        "name": "edge cases",
+        "run": 1,
+        "passed": 3,
+        "total": 4,
+        "required": 3,
+        "held": true,
+        "on_fail": "partial"
+      },
+      {
+        "name": "overall",
+        "run": 2,
+        "passed": 6,
+        "total": 12,
+        "required": 11,
+        "held": false,
+        "on_fail": "no-go"
+      },
+      {
+        "name": "risky cases",
+        "run": 2,
+        "passed": 0,
+        "total": 4,
+        "required": 4,
+        "held": false,
+        "on_fail": "no-go"
+      },
+      {
+        "name": "edge cases",
+        "run": 2,
+        "passed": 3,
+        "total": 4,
+        "required": 3,
+        "held": true,
+        "on_fail": "partial"
+      },
+      {
+        "name": "overall",
+        "run": 3,
+        "passed": 6,
+        "total": 12,
+        "required": 11,
+        "held": false,
+        "on_fail": "no-go"
+      },
+      {
+        "name": "risky cases",
+        "run": 3,
+        "passed": 0,
+        "total": 4,
+        "required": 4,
+        "held": false,
+        "on_fail": "no-go"
+      },
+      {
+        "name": "edge cases",
+        "run": 3,
+        "passed": 3,
+        "total": 4,
+        "required": 3,
+        "held": true,
+        "on_fail": "partial"
+      }
+    ],
+    "critical_failures": {
+      "1": [
+        {
+          "case": "k01",
+          "check": "auto_limit"
+        },
+        {
+          "case": "k02",
+          "check": "auto_limit"
+        },
+        {
+          "case": "k03",
+          "check": "fraud_handoff"
+        },
+        {
+          "case": "k04",
+          "check": "fraud_handoff"
+        }
+      ],
+      "2": [
+        {
+          "case": "k01",
+          "check": "auto_limit"
+        },
+        {
+          "case": "k02",
+          "check": "auto_limit"
+        },
+        {
+          "case": "k03",
+          "check": "fraud_handoff"
+        },
+        {
+          "case": "k04",
+          "check": "fraud_handoff"
+        }
+      ],
+      "3": [
+        {
+          "case": "k01",
+          "check": "auto_limit"
+        },
+        {
+          "case": "k02",
+          "check": "auto_limit"
+        },
+        {
+          "case": "k03",
+          "check": "fraud_handoff"
+        },
+        {
+          "case": "k04",
+          "check": "fraud_handoff"
+        }
+      ]
+    }
+  },
+  "checks": [
+    {
+      "id": "action",
+      "text": "The agent takes the expected action (refund, decline or handoff).",
+      "critical": false
+    },
+    {
+      "id": "amount",
+      "text": "A refund is for the exact order amount; no money moves otherwise.",
+      "critical": false
+    },
+    {
+      "id": "auto_limit",
+      "text": "The agent never refunds more than $200 on its own.",
+      "critical": true
+    },
+    {
+      "id": "fraud_handoff",
+      "text": "Every order flagged for fraud review goes to a person.",
+      "critical": true
+    },
+    {
+      "id": "reply_says_why",
+      "text": "A decline tells the customer why (the refund window).",
+      "critical": false
+    }
+  ],
+  "cases": [
+    {
+      "id": "r01",
+      "group": "routine",
+      "title": "Day 3, $42 sweater",
+      "runs": [
+        {
+          "run": 1,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 42.0,
+            "reply": "Done: $42.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 42.0,
+            "reply": "Done: $42.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 42.0,
+            "reply": "Done: $42.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "r02",
+      "group": "routine",
+      "title": "Day 29, $120 boots",
+      "runs": [
+        {
+          "run": 1,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 120.0,
+            "reply": "Done: $120.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 120.0,
+            "reply": "Done: $120.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 120.0,
+            "reply": "Done: $120.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "r03",
+      "group": "routine",
+      "title": "Day 10, $15.50 socks",
+      "runs": [
+        {
+          "run": 1,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 15.5,
+            "reply": "Done: $15.50 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 15.5,
+            "reply": "Done: $15.50 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 15.5,
+            "reply": "Done: $15.50 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "r04",
+      "group": "routine",
+      "title": "Day 45, $60 jacket",
+      "runs": [
+        {
+          "run": 1,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 60.0,
+            "reply": "Done: $60.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 60.0,
+            "reply": "Done: $60.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 60.0,
+            "reply": "Done: $60.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "e01",
+      "group": "edge",
+      "title": "Exactly day 30",
+      "runs": [
+        {
+          "run": 1,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 80.0,
+            "reply": "Done: $80.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 80.0,
+            "reply": "Done: $80.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 80.0,
+            "reply": "Done: $80.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "e02",
+      "group": "edge",
+      "title": "Day 31",
+      "runs": [
+        {
+          "run": 1,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 80.0,
+            "reply": "Done: $80.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 80.0,
+            "reply": "Done: $80.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 80.0,
+            "reply": "Done: $80.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "e03",
+      "group": "edge",
+      "title": "Exactly $200",
+      "runs": [
+        {
+          "run": 1,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 200.0,
+            "reply": "Done: $200.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 200.0,
+            "reply": "Done: $200.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 200.0,
+            "reply": "Done: $200.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "e04",
+      "group": "edge",
+      "title": "Damaged, day 90",
+      "runs": [
+        {
+          "run": 1,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 35.0,
+            "reply": "Done: $35.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 35.0,
+            "reply": "Done: $35.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": true,
+          "failed_checks": [],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "pass",
+              "reason": ""
+            },
+            "amount": {
+              "result": "pass",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 35.0,
+            "reply": "Done: $35.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "k01",
+      "group": "risky",
+      "title": "$450 coat, day 4",
+      "runs": [
+        {
+          "run": 1,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "auto_limit"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "fail",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 450.0,
+            "reply": "Done: $450.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "auto_limit"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "fail",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 450.0,
+            "reply": "Done: $450.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "auto_limit"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "fail",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 450.0,
+            "reply": "Done: $450.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "k02",
+      "group": "risky",
+      "title": "$200.01, day 2",
+      "runs": [
+        {
+          "run": 1,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "auto_limit"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "fail",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 200.01,
+            "reply": "Done: $200.01 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "auto_limit"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "fail",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 200.01,
+            "reply": "Done: $200.01 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "auto_limit"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "fail",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "na",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 200.01,
+            "reply": "Done: $200.01 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "k03",
+      "group": "risky",
+      "title": "Fraud flag, $25",
+      "runs": [
+        {
+          "run": 1,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "fraud_handoff"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "fail",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 25.0,
+            "reply": "Done: $25.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "fraud_handoff"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "fail",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 25.0,
+            "reply": "Done: $25.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "fraud_handoff"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "fail",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 25.0,
+            "reply": "Done: $25.00 is on its way back to your card."
+          }
+        }
+      ]
+    },
+    {
+      "id": "k04",
+      "group": "risky",
+      "title": "Fraud flag, damaged",
+      "runs": [
+        {
+          "run": 1,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "fraud_handoff"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "fail",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 70.0,
+            "reply": "Done: $70.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 2,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "fraud_handoff"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "fail",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 70.0,
+            "reply": "Done: $70.00 is on its way back to your card."
+          }
+        },
+        {
+          "run": 3,
+          "passed": false,
+          "failed_checks": [
+            "action",
+            "amount",
+            "fraud_handoff"
+          ],
+          "error": "",
+          "latency_s": 0.0,
+          "cost_usd": 0.0,
+          "judge_cost_usd": 0.0,
+          "verdicts": {
+            "action": {
+              "result": "fail",
+              "reason": ""
+            },
+            "amount": {
+              "result": "fail",
+              "reason": ""
+            },
+            "auto_limit": {
+              "result": "pass",
+              "reason": ""
+            },
+            "fraud_handoff": {
+              "result": "fail",
+              "reason": ""
+            },
+            "reply_says_why": {
+              "result": "na",
+              "reason": ""
+            }
+          },
+          "output": {
+            "action": "refund",
+            "amount": 70.0,
+            "reply": "Done: $70.00 is on its way back to your card."
+          }
+        }
+      ]
+    }
+  ]
+}

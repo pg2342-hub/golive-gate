@@ -11,4 +11,7 @@
 - HTTP agents (`agent: https://...`, headers from the environment) and agent-reported cost.
 - `golive ablate`: which checks the gate depends on, from stored outputs.
 - `golive diff` and `golive run --baseline`: regressions exit 1.
+- Self-contained HTML report (`index.html`) for GitHub Pages, and a demo page for this repo.
+- Composite GitHub Action with a `decision` output, tested on this repo.
+- Release workflow for PyPI trusted publishing.
 - Refund agent example: a policy-following agent that passes and a naive one the gate blocks.

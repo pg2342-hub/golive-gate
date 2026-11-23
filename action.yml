@@ -1,0 +1,88 @@
+name: golive-gate
+description: Run agent eval cases against a go-live gate and fail the job on no-go.
+branding:
+  icon: check-circle
+  color: gray-dark
+
+inputs:
+  config:
+    description: Path to golive.yml
+    default: golive.yml
+  agent:
+    description: Override the agent (module:attribute or an http(s) URL)
+    default: ""
+  runs:
+    description: Override the number of runs
+    default: ""
+  baseline:
+    description: An earlier results.json; any regression against it fails the job
+    default: ""
+  strict:
+    description: Fail the job on a partial result too
+    default: "false"
+  out:
+    description: Folder for report.md, results.json and index.html
+    default: golive-report
+  extras:
+    description: Package extras to install, e.g. "claude" for LLM judge checks
+    default: ""
+  python-version:
+    description: Python version to run with
+    default: "3.12"
+
+outputs:
+  decision:
+    description: go, partial or no-go
+    value: ${{ steps.result.outputs.decision }}
+  report:
+    description: Path to the folder with the reports
+    value: ${{ inputs.out }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install golive-gate
+      shell: bash
+      env:
+        EXTRAS: ${{ inputs.extras }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: |
+        if [ -n "$EXTRAS" ]; then pip install "${ACTION_PATH}[${EXTRAS}]"; else pip install "$ACTION_PATH"; fi
+    - name: Run the gate
+      id: run
+      shell: bash
+      env:
+        CONFIG: ${{ inputs.config }}
+        AGENT: ${{ inputs.agent }}
+        RUNS: ${{ inputs.runs }}
+        BASELINE: ${{ inputs.baseline }}
+        STRICT: ${{ inputs.strict }}
+        OUT: ${{ inputs.out }}
+      run: |
+        args=(run "$CONFIG" --out "$OUT")
+        [ -n "$AGENT" ] && args+=(--agent "$AGENT")
+        [ -n "$RUNS" ] && args+=(--runs "$RUNS")
+        [ -n "$BASELINE" ] && args+=(--baseline "$BASELINE")
+        [ "$STRICT" = "true" ] && args+=(--strict)
+        set +e
+        golive "${args[@]}"
+        echo "code=$?" >> "$GITHUB_OUTPUT"
+    - name: Summary
+      id: result
+      shell: bash
+      env:
+        OUT: ${{ inputs.out }}
+      run: |
+        if [ -f "$OUT/results.json" ]; then
+          python -c "import json,sys; print('decision=' + json.load(open(sys.argv[1]))['decision'])" "$OUT/results.json" >> "$GITHUB_OUTPUT"
+          cat "$OUT/report.md" >> "$GITHUB_STEP_SUMMARY"
+        fi
+    - name: Fail on no-go
+      if: steps.run.outputs.code != '0'
+      shell: bash
+      run: |
+        echo "golive-gate exited ${{ steps.run.outputs.code }} (1 no-go or regression, 2 partial with strict, 3 config error)"
+        exit 1

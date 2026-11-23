@@ -71,3 +71,11 @@ def test_ablate_and_baseline(tmp_path, capsys):
     assert "k03" in capsys.readouterr().out
     assert main(["diff", base, base]) == 0
     assert main(["diff", base, str(tmp_path / "missing.json")]) == 3
+
+
+def test_html_page_written(tmp_path):
+    assert main(["run", str(EXAMPLE), "--agent", "agent:naive_agent", "--runs", "1", "--out", str(tmp_path)]) == 1
+    page = (tmp_path / "index.html").read_text()
+    assert page.startswith("<!doctype html>")
+    assert "NO-GO" in page and "Fraud flag, $25" in page and "fraud_handoff" in page
+    assert "<script" not in page

@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/pg2342-hub/golive-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/pg2342-hub/golive-gate/actions/workflows/ci.yml)
 
+Demo page: https://pg2342-hub.github.io/golive-gate/ (a naive refund agent blocked by the gate, every case and check, no install needed)
+
 Turn agent eval cases, checks and go-live gates into one command: **go, partial or no-go, with the reason.**
 
 Before an AI agent acts on its own for a customer, someone has to decide it is ready. That decision usually lives in a spreadsheet or in someone's head. golive-gate writes it down as three files you can review and run in CI:
@@ -96,7 +98,11 @@ The decision is **no-go** if critical failures exceed the allowance or any `no-g
 
 ## Output
 
-`golive run` writes `report.md` (for people) and `results.json` (for tools and demo pages) to `reports/` next to `golive.yml`, or to `--out`.
+`golive run` writes three files to `reports/` next to `golive.yml`, or to `--out`:
+
+- `report.md`, for people and pull request summaries
+- `results.json`, for tools, diffs and dashboards
+- `index.html`, one self-contained page with every case and check verdict. Put it in `docs/` and GitHub Pages serves it as a demo (`scripts/build_demo.sh` builds this repo's).
 
 | Exit code | Meaning |
 |---|---|
@@ -106,6 +112,23 @@ The decision is **no-go** if critical failures exceed the allowance or any `no-g
 | 3 | config error |
 
 So a CI step that runs `golive run` fails the build when the agent is not ready. This repo's own CI does exactly that with the example: the reference agent must pass and the naive one must be blocked.
+
+## GitHub Action
+
+```yaml
+- uses: actions/checkout@v4
+- id: gate
+  uses: pg2342-hub/golive-gate@main
+  with:
+    config: evals/golive.yml
+    baseline: evals/baseline/results.json   # optional: fail on any regression
+    extras: claude                          # optional: for LLM judge checks
+  env:
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+- run: echo "decision was ${{ steps.gate.outputs.decision }}"
+```
+
+The job fails on no-go (or on partial with `strict: "true"`), the markdown report lands on the job summary page, and the `decision` output is go, partial or no-go. This repo tests the action on itself in `.github/workflows/action-selftest.yml`.
 
 ## LLM judge checks
 
@@ -167,9 +190,8 @@ An agent can return `Response(output, cost_usd=...)` to have cost recorded; late
 
 ## Roadmap
 
-- HTML report for GitHub Pages
-- A reusable GitHub Action
-- PyPI release
+- PyPI release (`pip install golive-gate`)
+- More worked examples: field-service booking, text-message ordering, voice screening
 
 ## License
 

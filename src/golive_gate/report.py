@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from . import html
 from .gates import Gate, GateResult
 from .runner import RunResult
 
@@ -87,9 +88,12 @@ def write(out_dir: str | Path, result: RunResult, gate: Gate, outcome: GateResul
     out.mkdir(parents=True, exist_ok=True)
     md = out / "report.md"
     js = out / "results.json"
+    page = out / "index.html"
+    data = to_dict(result, gate, outcome, agent)
     md.write_text(to_markdown(result, gate, outcome, agent), encoding="utf-8")
-    js.write_text(json.dumps(to_dict(result, gate, outcome, agent), indent=2) + "\n", encoding="utf-8")
-    return {"markdown": md, "json": js}
+    js.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    page.write_text(html.render(data), encoding="utf-8")
+    return {"markdown": md, "json": js, "html": page}
 
 
 def _summary(result: RunResult) -> dict[str, Any]:
