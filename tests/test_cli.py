@@ -53,3 +53,21 @@ def test_config_errors_exit_3(tmp_path, capsys, config, message):
     (tmp_path / "golive.yml").write_text(config)
     assert main(["run", str(tmp_path / "golive.yml")]) == 3
     assert message in capsys.readouterr().err
+
+
+def test_ablate_and_baseline(tmp_path, capsys):
+    assert main(["ablate", str(EXAMPLE), "--agent", "agent:naive_agent", "--runs", "1", "--out", str(tmp_path)]) == 0
+    assert "| auto_limit | yes | NO-GO |" in (tmp_path / "ablation.md").read_text()
+
+    good = tmp_path / "good"
+    assert main(["run", str(EXAMPLE), "--runs", "1", "--out", str(good)]) == 0
+    base = str(good / "results.json")
+    # Same agent against its own baseline: no regression.
+    assert main(["run", str(EXAMPLE), "--runs", "1", "--out", str(tmp_path / "again"), "--baseline", base]) == 0
+    bad = tmp_path / "bad"
+    assert main(["run", str(EXAMPLE), "--agent", "agent:naive_agent", "--runs", "1", "--out", str(bad)]) == 1
+    capsys.readouterr()
+    assert main(["diff", base, str(bad / "results.json")]) == 1
+    assert "k03" in capsys.readouterr().out
+    assert main(["diff", base, base]) == 0
+    assert main(["diff", base, str(tmp_path / "missing.json")]) == 3

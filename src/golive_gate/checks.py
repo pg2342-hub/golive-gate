@@ -14,6 +14,7 @@ VERDICTS = (PASS, FAIL, NA)
 class Verdict:
     result: str
     reason: str = ""
+    cost_usd: float = 0.0  # what grading cost, e.g. an LLM judge call
 
     def __post_init__(self) -> None:
         if self.result not in VERDICTS:

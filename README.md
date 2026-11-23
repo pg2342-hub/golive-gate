@@ -30,7 +30,7 @@ The naive agent refunds everything. It passes every routine case, which is exact
 pip install git+https://github.com/pg2342-hub/golive-gate
 ```
 
-Python 3.9 or newer. The only dependency is PyYAML.
+Python 3.9 or newer. The only dependency is PyYAML; `pip install "golive-gate[claude]"` adds the Anthropic SDK for LLM judge checks (Python 3.10+).
 
 ## A project in four files
 
@@ -101,11 +101,57 @@ The decision is **no-go** if critical failures exceed the allowance or any `no-g
 | Exit code | Meaning |
 |---|---|
 | 0 | go (or partial, unless `--strict`) |
-| 1 | no-go |
+| 1 | no-go, or a regression against `--baseline` |
 | 2 | partial with `--strict` |
 | 3 | config error |
 
 So a CI step that runs `golive run` fails the build when the agent is not ready. This repo's own CI does exactly that with the example: the reference agent must pass and the naive one must be blocked.
+
+## LLM judge checks
+
+Rules catch what a rule can state exactly. For the rest (tone, whether a reply explains itself, whether an answer is grounded), a judge check asks a model one yes/no criterion per call and keeps its reason and cost:
+
+```python
+from golive_gate import ClaudeJudge, judge_check
+
+tone = judge_check(
+    "decline_tone",
+    "If the agent declines, its reply is polite, says why in plain words, and does not blame the customer.",
+    judge=ClaudeJudge(),  # pip install "golive-gate[claude]", reads ANTHROPIC_API_KEY
+    render_output=lambda out: out["reply"],
+)
+```
+
+The judge must answer `VERDICT: PASS|FAIL|NA - reason`. A reply it cannot read, or a judge that declines to grade, counts as a **fail**, never a silent pass. A judge is any callable that takes a prompt and returns text, so another provider or a recorded-reply lookup drops in the same way. Judge cost is reported separately from agent cost. See `examples/refund_agent/golive.judge.yml`.
+
+## Agents behind an API
+
+Point `agent` at a URL instead of a Python function:
+
+```yaml
+agent: https://my-agent.internal/respond
+agent_headers:
+  Authorization: Bearer ${AGENT_TOKEN}     # read from the environment
+```
+
+Each case is sent as `POST {"input": ...}`. If the JSON reply has an `output` key, that is the output and an optional `cost_usd` is recorded; otherwise the whole body is the output.
+
+## Which checks does the gate depend on?
+
+```
+$ golive ablate examples/refund_agent/golive.yml --agent agent:naive_agent --runs 1
+```
+
+Ablation switches off each check in turn and re-grades the stored outputs (no extra agent or judge calls). It shows what the gate would have said without that check, and which cases only that check catches. A check that never catches anything on its own is either redundant or not tested by your cases. Run it against a weak agent: against an agent that passes everything, every row is trivially GO.
+
+## Regressions
+
+```
+$ golive run golive.yml --baseline reports/last-release/results.json
+$ golive diff before/results.json after/results.json
+```
+
+A case counts as passing only if it passed on every run. Any case that passed before and fails now, or a worse gate decision, exits 1, so a prompt or model change that breaks a case that used to work fails CI even if the overall gate still holds.
 
 ## Use it from Python
 
@@ -121,9 +167,9 @@ An agent can return `Response(output, cost_usd=...)` to have cost recorded; late
 
 ## Roadmap
 
-- LLM judge checks (one yes/no criterion per call, with the judge's reason, cost and latency)
-- HTTP agents, ablation (`golive ablate`: switch a check off and see which cases catch it), regression diff against a baseline
-- HTML report for GitHub Pages, a reusable GitHub Action, PyPI release
+- HTML report for GitHub Pages
+- A reusable GitHub Action
+- PyPI release
 
 ## License
 

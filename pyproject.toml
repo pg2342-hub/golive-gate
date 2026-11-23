@@ -25,6 +25,7 @@ classifiers = [
 dependencies = ["PyYAML>=6.0"]
 
 [project.optional-dependencies]
+claude = ["anthropic>=2.12; python_version >= '3.10'"]
 dev = ["pytest>=7", "ruff>=0.5"]
 
 [project.scripts]

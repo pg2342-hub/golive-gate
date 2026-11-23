@@ -18,7 +18,8 @@ jobs:
       - run: ruff format --check .
 
   test:
-    runs-on: ubuntu-latest
+    # ubuntu-24.04: the newest runner image no longer ships Python 3.9
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -33,12 +34,14 @@ jobs:
 
   example-gate:
     runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install .
+      - run: pip install ".[claude]"
       - name: Reference agent must pass the gate
         run: golive run examples/refund_agent/golive.yml --out reports/spec
       - name: Naive agent must be blocked by the gate
@@ -47,6 +50,13 @@ jobs:
           golive run examples/refund_agent/golive.yml --agent agent:naive_agent --out reports/naive
           code=$?
           if [ "$code" -ne 1 ]; then echo "expected no-go (exit 1), got $code"; exit 1; fi
+      - name: Ablation against the naive agent
+        run: golive ablate examples/refund_agent/golive.yml --agent agent:naive_agent --runs 1 --out reports/ablation
+      - name: LLM judge example (runs only when the ANTHROPIC_API_KEY secret is set)
+        if: env.ANTHROPIC_API_KEY != ''
+        run: golive run examples/refund_agent/golive.judge.yml --out reports/judge
       - name: Gate summary
         if: always()
-        run: cat reports/spec/report.md >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          cat reports/spec/report.md >> "$GITHUB_STEP_SUMMARY"
+          if [ -f reports/judge/report.md ]; then cat reports/judge/report.md >> "$GITHUB_STEP_SUMMARY"; fi

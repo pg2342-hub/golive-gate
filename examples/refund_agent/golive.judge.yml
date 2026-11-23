@@ -1,0 +1,6 @@
+# Same cases and gate, plus an LLM judge check. Needs ANTHROPIC_API_KEY.
+cases: cases.yml
+checks: judge_checks:checks
+agent: agent:spec_agent
+gate: gate.yml
+runs: 1

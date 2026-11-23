@@ -2,7 +2,9 @@
 
     cases: cases.yml            # .yml, .json or .jsonl, relative to this file
     checks: checks:checks       # module:attribute holding a CheckSet
-    agent: agent:spec_agent     # module:attribute, called with each case's input
+    agent: agent:spec_agent     # module:attribute called with each case's input, or an http(s) URL
+    agent_headers:              # optional, for an http agent; ${VARS} are read from the environment
+      Authorization: Bearer ${AGENT_TOKEN}
     gate: gate.yml              # a file, or the gate written inline as a mapping
     runs: 3
 
@@ -12,6 +14,7 @@ Modules are imported from the folder that holds golive.yml.
 from __future__ import annotations
 
 import importlib
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -19,6 +22,7 @@ from typing import Any
 
 import yaml
 
+from .agents import http_agent
 from .cases import Case, load_cases
 from .checks import CheckSet
 from .gates import Gate
@@ -50,7 +54,11 @@ def load_project(path: str | Path, agent: str | None = None, runs: int | None = 
     if not isinstance(checks, CheckSet):
         raise TypeError(f"'checks' must point to a CheckSet, got {type(checks).__name__}")
     agent_ref = agent or raw["agent"]
-    agent_fn = resolve(agent_ref)
+    if agent_ref.startswith(("http://", "https://")):
+        headers = {k: os.path.expandvars(str(v)) for k, v in (raw.get("agent_headers") or {}).items()}
+        agent_fn = http_agent(agent_ref, headers=headers)
+    else:
+        agent_fn = resolve(agent_ref)
     if not callable(agent_fn):
         raise TypeError(f"agent {agent_ref!r} is not callable")
 

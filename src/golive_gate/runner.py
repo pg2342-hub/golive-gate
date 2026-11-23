@@ -27,8 +27,12 @@ class CaseRun:
     output: Any
     verdicts: dict[str, Verdict]
     latency_s: float
-    cost_usd: float = 0.0
+    cost_usd: float = 0.0  # what the agent cost
     error: str = ""
+
+    @property
+    def judge_cost_usd(self) -> float:
+        return sum(v.cost_usd for v in self.verdicts.values())
 
     @property
     def passed(self) -> bool:
@@ -59,6 +63,21 @@ class RunResult:
     @property
     def total_cost_usd(self) -> float:
         return sum(cr.cost_usd for cr in self.case_runs)
+
+    @property
+    def total_judge_cost_usd(self) -> float:
+        return sum(cr.judge_cost_usd for cr in self.case_runs)
+
+    def without_checks(self, *ids: str) -> RunResult:
+        """The same outputs graded as if these checks did not exist (no agent or judge calls)."""
+        kept = self.checks.without(*ids)
+        clone = RunResult(cases=self.cases, checks=kept, runs=self.runs)
+        for cr in self.case_runs:
+            verdicts = {k: v for k, v in cr.verdicts.items() if k not in ids}
+            clone.case_runs.append(
+                CaseRun(cr.case_id, cr.group, cr.run, cr.output, verdicts, cr.latency_s, cr.cost_usd, cr.error)
+            )
+        return clone
 
     @property
     def mean_latency_s(self) -> float:

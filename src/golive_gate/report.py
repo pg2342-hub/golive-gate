@@ -34,6 +34,7 @@ def to_dict(result: RunResult, gate: Gate, outcome: GateResult, agent: str = "")
                         "error": cr.error,
                         "latency_s": round(cr.latency_s, 4),
                         "cost_usd": round(cr.cost_usd, 6),
+                        "judge_cost_usd": round(cr.judge_cost_usd, 6),
                         "verdicts": {k: {"result": v.result, "reason": v.reason} for k, v in cr.verdicts.items()},
                         "output": _jsonable(cr.output),
                     }
@@ -59,7 +60,8 @@ def to_markdown(result: RunResult, gate: Gate, outcome: GateResult, agent: str =
         lines.append(f"| {run['run']} | {run['passed']} of {run['total']} | {run['critical']} |")
     lines += [
         "",
-        f"Cost {s['total_cost_usd']:.4f} USD in total, mean latency {s['mean_latency_s'] * 1000:.1f} ms per case.",
+        f"Agent cost {s['total_cost_usd']:.4f} USD, judge cost {s['total_judge_cost_usd']:.4f} USD, "
+        f"mean latency {s['mean_latency_s'] * 1000:.1f} ms per case.",
         "",
         "## Cases",
         "",
@@ -105,6 +107,7 @@ def _summary(result: RunResult) -> dict[str, Any]:
     return {
         "by_run": by_run,
         "total_cost_usd": round(result.total_cost_usd, 6),
+        "total_judge_cost_usd": round(result.total_judge_cost_usd, 6),
         "mean_latency_s": round(result.mean_latency_s, 6),
     }
 
