@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/pg2342-hub/golive-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/pg2342-hub/golive-gate/actions/workflows/ci.yml)
 
-Demo page: https://pg2342-hub.github.io/golive-gate/ (a naive refund agent blocked by the gate, every case and check, no install needed)
+Demo page: https://pranavgudise.dev/golive-gate/ (two refund agents on the same cases and gate: one goes live, one is blocked, with every case and check; no install needed)
 
 Turn agent eval cases, checks and go-live gates into one command: **go, partial or no-go, with the reason.**
 
